@@ -1,0 +1,44 @@
+#carbon-calculator-title:before {
+    font: normal 20px/1 dashicons;
+    speak: never;
+    display: inline-block;
+    margin-left: -1px;
+    padding-right: 3px;
+    vertical-align: top;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: "\f319";
+    position: relative;
+    top: -1px;
+    color:#8c8f94
+}
+
+.carbon-calculator--red #carbon-calculator-title:before{ color: #b32d2e }
+.carbon-calculator--orange #carbon-calculator-title:before{ color: #f19c65 }
+.carbon-calculator--green #carbon-calculator-title:before{ color: #2aa876 }
+.carbon-calculator--grey #carbon-calculator-display{ display: none }
+
+#carbon-calculator-display{ font-weight: 500 }
+#carbon-calculate span{ pointer-events: none }
+#carbon-calculate{ cursor: pointer; text-decoration: underline }
+#carbon-calculate.is-loading{ cursor: wait; pointer-events: none }
+#carbon-calculate.is-loading span{ display: none }
+#carbon-calculate.is-loading:after{
+    content: ""; width: 30px; height: 8px; margin-left: 10px; display: inline-block;
+    background: url("loader.svg") no-repeat center; background-size: contain
+}
+
+#edittag .carbon-calculator{ margin-top: 1em }
+#carbon-calculator-details{ max-width: 480px; display: none }
+#carbon-calculator-display{ margin-right: 5px; cursor: pointer }
+#carbon-calculator-display:after{ content: "\f140"; display: inline-block; font: normal 20px/1 dashicons; vertical-align: text-top }
+#carbon-calculator-display.is-active:after{ content: "\f142" }
+#carbon-calculator-details span span{ flex-basis: 50%; padding: 4px 0; box-sizing: border-box }
+.misc-pub-carbon-calculator #carbon-calculator-details span span{ flex-basis: 100% }
+#carbon-calculator-details > span{
+    display: flex; flex-wrap: wrap; margin-top: 5px; background: #fff; border-radius: 4px; padding: 8px 12px;
+    box-shadow: 0 1px 2px 0 rgb(22 29 37 / 5%);
+}
+.misc-pub-carbon-calculator #carbon-calculator-details > span{
+    background: none; box-shadow: none; padding: 0;
+}

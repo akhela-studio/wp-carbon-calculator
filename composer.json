@@ -1,0 +1,17 @@
+{
+  "name": "akhela/wp-carbon-calculator",
+  "type": "wordpress-plugin",
+  "version": "1.0.0",
+  "homepage": "http://www.akhela.fr",
+  "license": "GPL-3.0-or-later",
+  "description": "Website carbon calculator",
+  "keywords": ["plugin","wordpress"],
+  "extra": {
+    "branch-alias": {
+      "dev-1.0.x": "1.0.x-dev"
+    }
+  },
+  "require": {
+    "akhela/website-carbon-calculator": "^1.0"
+  }
+}
