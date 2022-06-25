@@ -78,8 +78,6 @@ class WCCActions{
             return;
         }
 
-        $url = 'https://www.yahoo.com';
-
         //ensure generated cached version
         wp_remote_get($url);
 
