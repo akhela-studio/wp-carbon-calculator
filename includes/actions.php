@@ -21,6 +21,40 @@ class WCCActions{
         add_action( 'wp_ajax_carbon_calculate', [$this, 'carbon_calculate'] );
     }
 
+    /**
+     * @param $size
+     * @param $precision
+     * @return string
+     */
+    private function humanFilesize($size, $precision = 2) {
+
+        $units = array('B','kB','MB','GB','TB','PB','EB','ZB','YB');
+        $step = 1024;
+        $i = 0;
+        while (($size / $step) > 0.9) {
+            $size = $size / $step;
+            $i++;
+        }
+        return round($size, $precision).$units[$i];
+    }
+
+    /**
+     * @param $size
+     * @param $precision
+     * @return string
+     */
+    private function humanTime($size, $precision = 2) {
+
+        $units = array('ms','s');
+        $step = 1000;
+        $i = 0;
+        while (($size / $step) > 0.9) {
+            $size = $size / $step;
+            $i++;
+        }
+        return round($size, $precision).$units[$i];
+    }
+
 
     /**
      * Compute carbon
@@ -54,18 +88,27 @@ class WCCActions{
         try {
 
             $computation = $websiteCarbonCalculator->calculateByURL($url, ['isGreenHost' => false]);
+            $co2 = $computation['co2PerPageview'];
 
             unset($computation['url'], $computation['isGreenHost']);
 
+            $computation['bytesTransferred'] = $this->humanFilesize($computation['bytesTransferred']);
+            $computation['firstMeaningfulPaint'] = $this->humanTime($computation['firstMeaningfulPaint']);
+            $computation['interactive'] = $this->humanTime($computation['interactive']);
+            $computation['bootupTime'] = $this->humanTime($computation['bootupTime']);
+            $computation['serverResponseTime'] = $this->humanTime($computation['serverResponseTime']);
+            $computation['mainthreadWork'] = $this->humanTime($computation['mainthreadWork']);
+            $computation['energy'] = round($computation['energy']*1000, 2).'Wh';
+
             if( $type == 'post' ){
 
-                update_post_meta($id, 'calculated_carbon', $computation['calculated_carbon']);
-                update_post_meta($id, '_calculated_carbon', $computation);
+                update_post_meta($id, 'calculated_carbon', $co2);
+                update_post_meta($id, 'calculated_carbon_details', $computation);
             }
             elseif( $type == 'term' ){
 
-                update_term_meta($id, 'calculated_carbon', $computation['calculated_carbon']);
-                update_term_meta($id, '_calculated_carbon', $computation);
+                update_term_meta($id, 'calculated_carbon', $co2);
+                update_term_meta($id, 'calculated_carbon_details', $computation);
             }
 
             wp_send_json($computation);
@@ -86,7 +129,7 @@ class WCCActions{
         if( !in_array($post->post_type, $this->options['post_types']) )
             return;
 
-        $computation = get_post_meta($post->ID,'_calculated_carbon', true);
+        $computation = get_post_meta($post->ID,'calculated_carbon_details', true);
         ?>
         <div class="misc-pub-section misc-pub-carbon-calculator">
             <?php $this->display_calculator_form($computation, 'post', $post->ID) ?>
@@ -101,7 +144,7 @@ class WCCActions{
      */
     public function term_edit_form_tag($tag, $taxonomy){
 
-        $computation = get_term_meta($tag->term_id,'_calculated_carbon', true);
+        $computation = get_term_meta($tag->term_id,'calculated_carbon_details', true);
         $this->display_calculator_form($computation, 'term', $tag->term_id);
     }
 
@@ -116,11 +159,12 @@ class WCCActions{
         $color_code = 'grey';
 
         if( $computation ){
+
             $color_code = 'orange';
 
-            if( $computation['co2PerPageview'] < $this->options['reference']/2 )
+            if( $computation['co2PerPageview'] <= floatval($this->options['reference'])/2 )
                 $color_code = 'green';
-            elseif( $computation['co2PerPageview'] > $this->options['reference']*2 )
+            elseif( $computation['co2PerPageview'] >= floatval($this->options['reference'])*2 )
                 $color_code = 'red';
         }
         ?>
@@ -131,14 +175,16 @@ class WCCActions{
                     <?=round($computation['co2PerPageview'],2)?>g eq. CO²
                 <?php endif; ?>
             </span>
-            <a id="carbon-calculate" data-type="<?=$type?>" data-id="<?=$id?>" role="button">
-                <span>Calculer</span>
+            <a id="carbon-calculate" data-type="<?=$type?>" data-id="<?=$id?>" role="button" title="Estimated computation time : 15s">
+                <span>Estimate</span>
             </a>
             <div id="carbon-calculator-details">
                 <span>
                     <?php if($computation):?>
                         <?php foreach ($computation as $key=>$value) :?>
-                            <span><?=$key?> : <b><?=$value?></b></span>
+                            <?php if( $key != 'co2PerPageview'):?>
+                                <span><?=$key?> : <b><?=$value?></b></span>
+                            <?php endif; ?>
                         <?php endforeach; ?>
                     <?php endif; ?>
                 </span>

@@ -4,6 +4,7 @@
         $('#carbon-calculate').click(function (){
 
             var $button = $(this);
+            var $details = $('#carbon-calculator-details');
 
             var data = {
                 action: 'carbon_calculate',
@@ -17,18 +18,25 @@
 
                 $button.removeClass('is-loading');
 
-                var details = '';
-                Object.keys(response).forEach(function (key){
-                    details += '<span>'+key+' : <b>'+response[key]+'</b></span>'
-                })
+                if( $details.length ){
+
+                    var details = '';
+
+                    Object.keys(response).forEach(function (key){
+                        if( key !== 'co2PerPageview' )
+                            details += '<span>'+key+' : <b>'+response[key]+'</b></span>'
+                    })
+
+                    $('#carbon-calculator-details').html('<span>'+details+'</span>')
+                }
+
                 $('#carbon-calculator-display').text((Math.round(response['co2PerPageview']*100)/100)+'g eq. CO²')
-                $('#carbon-calculator-details').html('<span>'+details+'</span>')
 
                 var color_code = 'orange'
-                if( response['co2PerPageview']*2 > parseFloat(wp_carbon_calculator.reference) )
-                    color_code = 'red'
-                else if( response['co2PerPageview']/2 < parseFloat(wp_carbon_calculator.reference) )
+                if( parseFloat(response['co2PerPageview']) <= parseFloat(wp_carbon_calculator.reference)/2 )
                     color_code = 'green'
+                else if( parseFloat(response['co2PerPageview']) >= parseFloat(wp_carbon_calculator.reference)*2 )
+                    color_code = 'red'
 
                 $('#carbon-calculator').removeClass('carbon-calculator--grey')
                     .removeClass('carbon-calculator--orange')
