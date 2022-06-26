@@ -8,7 +8,7 @@ class WCCActions{
 
     public function __construct()
     {
-        if( in_array($_SERVER['REMOTE_ADDR'], ['127.0.0.1', '::1']) && !WCC_DEBUG )
+        if( in_array($_SERVER['REMOTE_ADDR']??'127.0.0.1', ['127.0.0.1', '::1']) && !WCC_DEBUG )
             return;
 
         $this->options = get_option('carbon_calculator');
