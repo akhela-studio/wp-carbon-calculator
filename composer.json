@@ -10,8 +10,5 @@
     "branch-alias": {
       "dev-1.0.x": "1.0.x-dev"
     }
-  },
-  "require": {
-    "akhela/website-carbon-calculator": "^1.0"
   }
 }
