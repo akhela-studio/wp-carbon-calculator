@@ -78,6 +78,8 @@ class WCCActions{
             return;
         }
 
+        $url = get_home_url().wp_make_link_relative($url);
+
         //ensure generated cached version
         wp_remote_get($url);
 
