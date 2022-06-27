@@ -87,7 +87,7 @@ class WCCActions{
 
         try {
 
-            $computation = $websiteCarbonCalculator->calculateByURL($url, ['isGreenHost' => false]);
+            $computation = $websiteCarbonCalculator->calculateByURL($url, ['isGreenHost' => $this->options['is_green_host']??false]);
             $co2 = $computation['co2PerPageview'];
 
             unset($computation['url'], $computation['isGreenHost']);

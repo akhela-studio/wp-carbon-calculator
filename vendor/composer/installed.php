@@ -11,12 +11,12 @@
     ),
     'versions' => array(
         'akhela/website-carbon-calculator' => array(
-            'pretty_version' => '1.0.0',
-            'version' => '1.0.0.0',
+            'pretty_version' => '1.0.1',
+            'version' => '1.0.1.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../akhela/website-carbon-calculator',
             'aliases' => array(),
-            'reference' => '20438c3130dbb73c383bf21cde8b5c32e99a6912',
+            'reference' => '5bda040f0fb9fb968738e6b6e0634f856a0f1787',
             'dev_requirement' => false,
         ),
         'akhela/wp-carbon-calculator' => array(

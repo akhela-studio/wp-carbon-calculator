@@ -2,17 +2,17 @@
     "packages": [
         {
             "name": "akhela/website-carbon-calculator",
-            "version": "1.0.0",
-            "version_normalized": "1.0.0.0",
+            "version": "1.0.1",
+            "version_normalized": "1.0.1.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/akhela-fr/website-carbon-calculator.git",
-                "reference": "20438c3130dbb73c383bf21cde8b5c32e99a6912"
+                "url": "https://github.com/akhela-studio/website-carbon-calculator.git",
+                "reference": "5bda040f0fb9fb968738e6b6e0634f856a0f1787"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/akhela-fr/website-carbon-calculator/zipball/20438c3130dbb73c383bf21cde8b5c32e99a6912",
-                "reference": "20438c3130dbb73c383bf21cde8b5c32e99a6912",
+                "url": "https://api.github.com/repos/akhela-studio/website-carbon-calculator/zipball/5bda040f0fb9fb968738e6b6e0634f856a0f1787",
+                "reference": "5bda040f0fb9fb968738e6b6e0634f856a0f1787",
                 "shasum": ""
             },
             "require": {
@@ -23,7 +23,7 @@
             "require-dev": {
                 "phpunit/phpunit": "^9.5"
             },
-            "time": "2022-04-01T07:55:04+00:00",
+            "time": "2022-06-27T20:04:26+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -37,8 +37,8 @@
             ],
             "description": "Estimate your web page carbon footprint",
             "support": {
-                "issues": "https://github.com/akhela-fr/website-carbon-calculator/issues",
-                "source": "https://github.com/akhela-fr/website-carbon-calculator/tree/1.0.0"
+                "issues": "https://github.com/akhela-studio/website-carbon-calculator/issues",
+                "source": "https://github.com/akhela-studio/website-carbon-calculator/tree/1.0.1"
             },
             "install-path": "../akhela/website-carbon-calculator"
         },
