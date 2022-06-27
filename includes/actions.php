@@ -15,7 +15,7 @@ class WCCActions{
 
         add_action( 'post_submitbox_misc_actions', [$this, 'post_submitbox_misc_actions']);
 
-        foreach ($this->options['taxonomies'] as $taxonomy)
+        foreach ($this->options['taxonomies']??[] as $taxonomy)
             add_action($taxonomy.'_term_edit_form_top', [$this, 'term_edit_form_tag'], 10, 2);
 
         add_action( 'wp_ajax_carbon_calculate', [$this, 'carbon_calculate'] );
