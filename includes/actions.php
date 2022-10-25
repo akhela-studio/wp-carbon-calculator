@@ -126,7 +126,7 @@ class WCCActions{
      */
     public function post_submitbox_misc_actions($post){
 
-        if( !in_array($post->post_type, $this->options['post_types']) )
+        if( !in_array($post->post_type, $this->options['post_types']??[]) )
             return;
 
         $computation = get_post_meta($post->ID,'calculated_carbon_details', true);
