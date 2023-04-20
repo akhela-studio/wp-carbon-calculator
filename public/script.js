@@ -30,19 +30,21 @@
                     $('#carbon-calculator-details').html('<span>'+details+'</span>')
                 }
 
+                $('#carbon-calculator-progressinfo').text((Math.round(response['co2PerPageview']*100)/100)+' / '+wp_carbon_calculator.reference+' g eq. CO²')
                 $('#carbon-calculator-display').text((Math.round(response['co2PerPageview']*100)/100)+'g eq. CO²')
-
-                var color_code = 'orange'
-                if( parseFloat(response['co2PerPageview']) <= parseFloat(wp_carbon_calculator.reference)/2 )
-                    color_code = 'green'
-                else if( parseFloat(response['co2PerPageview']) >= parseFloat(wp_carbon_calculator.reference)*2 )
-                    color_code = 'red'
+                $('#carbon-calculator-progress').width((response['co2PerPageview']/wp_carbon_calculator.reference*100)+'%')
 
                 $('#carbon-calculator').removeClass('carbon-calculator--grey')
                     .removeClass('carbon-calculator--orange')
                     .removeClass('carbon-calculator--green')
                     .removeClass('carbon-calculator--red')
-                    .addClass('carbon-calculator--'+color_code)
+                    .addClass('carbon-calculator--'+response['colorCode'])
+
+            }).fail(function(xhr, status, error) {
+
+                $button.removeClass('is-loading');
+
+                alert(xhr.responseJSON)
             });
         })
 

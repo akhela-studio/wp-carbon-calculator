@@ -36,6 +36,8 @@ class WCCSettings{
         );
 
         $options = get_option('carbon_calculator');
+        $options = is_array($options)?$options:[];
+
         $options = array_merge(['is_green_host'=>false, 'post_types'=>[], 'taxonomies'=>[], 'pagespeed_api_key'=>'', 'reference'=>0.55], $options);
 
         add_settings_section( 'carbon_calculator', 'Settings', function() use($options){

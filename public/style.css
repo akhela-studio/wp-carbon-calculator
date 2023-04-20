@@ -1,24 +1,14 @@
-#carbon-calculator-title:before {
-    font: normal 20px/1 dashicons;
-    speak: never;
-    display: inline-block;
-    margin-left: -1px;
-    padding-right: 3px;
-    vertical-align: top;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    content: "\f319";
-    position: relative;
-    top: -1px;
-    color:#8c8f94
-}
-
-.carbon-calculator--red #carbon-calculator-title:before{ color: #b32d2e }
-.carbon-calculator--orange #carbon-calculator-title:before{ color: #f19c65 }
-.carbon-calculator--green #carbon-calculator-title:before{ color: #2aa876 }
+.carbon-calculator--red #carbon-calculator-progress{ background: #d75b5c }
+.carbon-calculator--orange #carbon-calculator-progress{ background: #f19c65 }
+.carbon-calculator--green #carbon-calculator-progress{ background: #5fc17d }
 .carbon-calculator--grey #carbon-calculator-display{ display: none }
 
+#carbon-calculator label{ font-weight: 500; color: #1d2327 }
 #carbon-calculator-display{ font-weight: 500 }
+#carbon-calculator-progressbar{ height: 5px; border-radius: 10px; background: #eee; position: relative; margin-top: 20px; margin-bottom: 10px }
+#edittag #carbon-calculator-progressbar{ background: #fff; margin-top: 10px }
+#carbon-calculator-progress{ height: 100%; border-radius: 10px; max-width: 100%; transition: 0.3s }
+#carbon-calculator-progressinfo{ position: absolute; right: 0; bottom: 100%; font-size: 12px; opacity: 0.7 }
 #carbon-calculate span{ pointer-events: none }
 #carbon-calculate{ cursor: pointer; text-decoration: underline }
 #carbon-calculate.is-loading{ cursor: wait; pointer-events: none }
@@ -27,18 +17,41 @@
     content: ""; width: 30px; height: 8px; margin-left: 10px; display: inline-block;
     background: url("loader.svg") no-repeat center; background-size: contain
 }
+#side-sortables #carbon-calculate.is-loading:after{
+    margin-left: 0; background-image: url("loader-white.svg")
+}
 
+#edittag #carbon-calculate{ float: right }
 #edittag .carbon-calculator{ margin-top: 1em }
 #carbon-calculator-details{ max-width: 480px; display: none }
+#side-sortables #carbon-calculator-details{ max-width: none; clear: both }
 #carbon-calculator-display{ margin-right: 5px; cursor: pointer }
-#carbon-calculator-display:after{ content: "\f140"; display: inline-block; font: normal 20px/1 dashicons; vertical-align: text-top }
+#carbon-calculator-display:after{ content: "\f140"; display: inline-block; font: normal 20px/1 dashicons; vertical-align: middle }
 #carbon-calculator-display.is-active:after{ content: "\f142" }
 #carbon-calculator-details span span{ flex-basis: 50%; padding: 4px 0; box-sizing: border-box }
+#side-sortables #carbon-calculator-title{ padding-top: 5px; display: inline-block; margin-bottom: 10px }
+#side-sortables #carbon-calculator-details span span{ flex-basis: 100% }
+#side-sortables #carbon-calculate{
+    background: var(--wp-components-color-accent, var(--wp-admin-theme-color, #007cba)); text-decoration: none;
+    color: var(--wp-components-color-accent-inverted, #fff); border-radius: 2px; padding: 6px 12px; float: right;
+}
 .misc-pub-carbon-calculator #carbon-calculator-details span span{ flex-basis: 100% }
 #carbon-calculator-details > span{
     display: flex; flex-wrap: wrap; margin-top: 5px; background: #fff; border-radius: 4px; padding: 8px 12px;
-    box-shadow: 0 1px 2px 0 rgb(22 29 37 / 5%);
+    box-shadow: 0 1px 2px 0 rgb(22 29 37 / 5%); font-family: monospace; font-size: 12px;
+}
+#side-sortables #carbon-calculator-details > span{
+    background: #eee; width: 100%; margin-top: 0; box-sizing: border-box;
 }
 .misc-pub-carbon-calculator #carbon-calculator-details > span{
     background: none; box-shadow: none; padding: 0;
 }
+
+.wcc-badge{ width: 14px; height: 14px; background: #eee; display: inline-block; border-radius: 50%; outline: 1px solid #eee; border: 1px solid #ffffff }
+.wcc-badge--red{ background: #d75b5c; outline-color: #d75b5c }
+.wcc-badge--orange{ background: #f19c65; outline-color: #f19c65 }
+.wcc-badge--green{ background: #5fc17d; outline-color: #5fc17d }
+.wcc-badge--grey{ background: #eee; outline-color: #eee }
+
+th#wcc, td.wcc.column-wcc{ width: 1%; white-space: nowrap; text-align: center }
+.wcc-icon{ color: #666; margin-left: 2px }

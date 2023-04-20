@@ -8,17 +8,81 @@ class WCCActions{
 
     public function __construct()
     {
+        add_action( 'password_protected_is_active', [$this, 'password_protected_is_active'] );
+
         if( in_array($_SERVER['REMOTE_ADDR']??'127.0.0.1', ['127.0.0.1', '::1']) && !WCC_DEBUG )
             return;
 
         $this->options = get_option('carbon_calculator');
 
+        add_action( 'add_meta_boxes', [$this, 'add_meta_boxes'] );
         add_action( 'post_submitbox_misc_actions', [$this, 'post_submitbox_misc_actions']);
 
-        foreach ($this->options['taxonomies']??[] as $taxonomy)
+        foreach ($this->options['taxonomies']??[] as $taxonomy){
             add_action($taxonomy.'_term_edit_form_top', [$this, 'term_edit_form_tag'], 10, 2);
+        }
+
+        foreach ($this->options['post_types']??[] as $post_type){
+            add_filter( "manage_{$post_type}_posts_columns", [ $this, 'manage_posts_columns' ] );
+            add_action( "manage_{$post_type}_posts_custom_column", [ $this, 'manage_posts_custom_column' ], 10, 2 );
+        }
 
         add_action( 'wp_ajax_carbon_calculate', [$this, 'carbon_calculate'] );
+    }
+
+    /**
+     * @return array
+     */
+    public function manage_posts_columns($columns) {
+
+        $columns['wcc'] = '<span class="wcc-icon dashicons-before dashicons-admin-site" title="Estimated carbon emissions"/>';
+
+        return $columns;
+    }
+
+    /**
+     * @return void
+     */
+    public function manage_posts_custom_column($column_name, $item_id) {
+
+        if( $column_name == 'wcc'){
+
+            $computation = get_post_meta($item_id,'calculated_carbon_details', true);
+
+            if( $computation )
+                echo '<a class="wcc-badge wcc-badge--'.$computation['colorCode'].'" title="'.round(($computation['co2PerPageview']??0),2).' g eq. CO²"/>';
+            else
+                echo '<a class="wcc-badge wcc-badge--grey"/>';
+        }
+    }
+
+    /**
+     * @return string
+     */public function password_protected_is_active($bool) {
+
+        if ( strpos($_SERVER['HTTP_USER_AGENT'], 'Lighthouse') !== false  || in_array($_SERVER['REMOTE_ADDR']??'127.0.0.1', ['127.0.0.1', '::1']) ) {
+            $bool = false;
+        }
+
+        return $bool;
+    }
+
+    /**
+     * @return string
+     */
+    public function add_meta_boxes() {
+
+        foreach ($this->options['post_types'] as $post_type){
+
+            add_meta_box(
+                'wpc',
+                __( 'Carbon calculator', 'wcc' ),
+                [$this, 'add_meta_box'],
+                $post_type,
+                'side',
+                'high'
+            );
+        }
     }
 
     /**
@@ -64,6 +128,7 @@ class WCCActions{
         $url = false;
         $id = intval($_POST['id']??0);
         $type = $_POST['type']??false;
+        $reference = floatval($this->options['reference']);
 
         ignore_user_abort(true);
 
@@ -79,6 +144,9 @@ class WCCActions{
         }
 
         $url = get_home_url().wp_make_link_relative($url);
+
+        if( in_array($_SERVER['REMOTE_ADDR']??'127.0.0.1', ['127.0.0.1', '::1']) && WCC_DEBUG )
+            $url = 'https://www.websitecarbon.com';
 
         //ensure generated cached version
         wp_remote_get($url);
@@ -99,6 +167,7 @@ class WCCActions{
             $computation['serverResponseTime'] = $this->humanTime($computation['serverResponseTime']);
             $computation['mainthreadWork'] = $this->humanTime($computation['mainthreadWork']);
             $computation['energy'] = round($computation['energy']*1000, 2).'Wh';
+            $computation['colorCode'] = $this->getColorCode($co2, $reference);
 
             if( $type == 'post' ){
 
@@ -115,7 +184,7 @@ class WCCActions{
 
         } catch (Throwable $t) {
 
-            wp_send_json($t->getMessage(), $t->getCode());
+            wp_send_json($t->getMessage(), 500);
         }
     }
 
@@ -139,13 +208,46 @@ class WCCActions{
 
 
     /**
+     * @return void
+     */
+    public function add_meta_box(){
+
+        $post = get_post();
+
+        $computation = get_post_meta($post->ID,'calculated_carbon_details', true);
+        $this->display_calculator_form($computation, 'post', $post->ID);
+    }
+
+
+    /**
      * @param WP_Term $tag
      * @return void
      */
     public function term_edit_form_tag($tag, $taxonomy){
 
         $computation = get_term_meta($tag->term_id,'calculated_carbon_details', true);
+
         $this->display_calculator_form($computation, 'term', $tag->term_id);
+    }
+
+    /**
+     * @param $co2PerPageview
+     * @param $reference
+     * @return string
+     */
+    public function getColorCode($co2PerPageview, $reference){
+
+        if( !$co2PerPageview )
+            return 'grey';
+
+        $color_code = 'orange';
+
+        if( $co2PerPageview <= $reference/2 )
+            $color_code = 'green';
+        elseif( $co2PerPageview >= $reference )
+            $color_code = 'red';
+
+        return $color_code;
     }
 
     /**
@@ -156,19 +258,22 @@ class WCCActions{
      */
     public function display_calculator_form($computation, $type, $id){
 
-        $color_code = 'grey';
-
-        if( $computation ){
-
-            $color_code = 'orange';
-
-            if( $computation['co2PerPageview'] <= floatval($this->options['reference'])/2 )
-                $color_code = 'green';
-            elseif( $computation['co2PerPageview'] >= floatval($this->options['reference'])*2 )
-                $color_code = 'red';
-        }
+        $reference = floatval($this->options['reference']);
         ?>
-        <div id="carbon-calculator" class="carbon-calculator carbon-calculator--<?=$color_code?>">
+        <div id="carbon-calculator" class="carbon-calculator carbon-calculator--<?=$computation['colorCode']??'grey'?>">
+
+            <?php if( $type == 'term'): ?>
+                <label>Carbon Calculator</label>
+            <?php endif; ?>
+            <div id="carbon-calculator-progressbar">
+                <div id="carbon-calculator-progress" style="width: <?=(($computation['co2PerPageview']??0)/$reference*100)?>%"></div>
+                <div id="carbon-calculator-progressinfo">
+                    <?php if($computation):?>
+                        <?=round(($computation['co2PerPageview']??0),2)?> /
+                    <?php endif; ?>
+                    <?=$reference?> g eq. CO²
+                </div>
+            </div>
             <span id="carbon-calculator-title">Footprint :</span>
             <span id="carbon-calculator-display" title="per page view">
                 <?php if($computation):?>

@@ -12,8 +12,10 @@ if ( ! defined( 'ABSPATH' ) )
 
 require __DIR__ . '/vendor/autoload.php';
 
-define('WCC_VERSION', '1.0.0');
-define('WCC_DEBUG', true);
+define('WCC_VERSION', '1.1.0');
+
+if( !defined('WCC_DEBUG') )
+    define('WCC_DEBUG', false);
 
 class WCC{
 
