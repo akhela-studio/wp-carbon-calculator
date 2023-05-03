@@ -60,7 +60,7 @@ class WCCActions{
      * @return string
      */public function password_protected_is_active($bool) {
 
-        if ( strpos($_SERVER['HTTP_USER_AGENT'], 'Lighthouse') !== false  || in_array($_SERVER['REMOTE_ADDR']??'127.0.0.1', ['127.0.0.1', '::1']) ) {
+        if ( strpos($_SERVER['HTTP_USER_AGENT']??'', 'Lighthouse') !== false  || in_array($_SERVER['REMOTE_ADDR']??'127.0.0.1', ['127.0.0.1', '::1']) ) {
             $bool = false;
         }
 
