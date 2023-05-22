@@ -16,7 +16,6 @@ class WCCActions{
         $this->options = get_option('carbon_calculator');
 
         add_action( 'add_meta_boxes', [$this, 'add_meta_boxes'] );
-        add_action( 'post_submitbox_misc_actions', [$this, 'post_submitbox_misc_actions']);
 
         foreach ($this->options['taxonomies']??[] as $taxonomy){
             add_action($taxonomy.'_term_edit_form_top', [$this, 'term_edit_form_tag'], 10, 2);
@@ -186,24 +185,6 @@ class WCCActions{
 
             wp_send_json($t->getMessage(), 500);
         }
-    }
-
-
-    /**
-     * @param WP_Post $post
-     * @return void
-     */
-    public function post_submitbox_misc_actions($post){
-
-        if( !in_array($post->post_type, $this->options['post_types']??[]) )
-            return;
-
-        $computation = get_post_meta($post->ID,'calculated_carbon_details', true);
-        ?>
-        <div class="misc-pub-section misc-pub-carbon-calculator">
-            <?php $this->display_calculator_form($computation, 'post', $post->ID) ?>
-        </div>
-        <?php
     }
 
 
