@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) )
 
 require __DIR__ . '/vendor/autoload.php';
 
-define('WCC_VERSION', '1.1.1');
+define('WCC_VERSION', '1.1.2');
 
 if( !defined('WCC_DEBUG') )
     define('WCC_DEBUG', false);
@@ -66,6 +66,7 @@ class WCC{
 
 function get_calculated_carbon(){
 
+    global $wp_query;
     $queried_object = get_queried_object();
 
     if( $queried_object instanceof WP_Term )
@@ -73,11 +74,11 @@ function get_calculated_carbon(){
     elseif ( $queried_object instanceof WP_Post )
         return get_post_meta($queried_object->ID, 'calculated_carbon', true);
     elseif ( $queried_object instanceof WP_Post_Type )
-        return get_option($queried_object->name . '_calculated_carbon');
+        return get_option($queried_object->name . '::calculated_carbon');
     elseif ( is_search() )
-        return get_option('search_calculated_carbon');
-    elseif ( is_404() )
-        return get_option('404_calculated_carbon');
+        return get_option('search::calculated_carbon');
+    elseif ( is_404() || ($wp_query->query['name']??'') == '404' )
+        return get_option('404::calculated_carbon');
 
     return false;
 }

@@ -2,7 +2,11 @@
 
 class WCCSettings{
 
+    private $options;
+
     public function __construct() {
+
+        $this->options = get_option('carbon_calculator');
 
         add_action( 'admin_menu', [$this, 'admin_menu'] );
         add_action( 'admin_init', [$this, 'admin_init'] );
@@ -15,6 +19,51 @@ class WCCSettings{
     {
         if( in_array($_SERVER['REMOTE_ADDR'], ['127.0.0.1', '::1']) )
             echo '<div class="notice notice-warning is-dismissible"><p>Calculator is not available on localhost</p></div>';
+    }
+
+    public function getStatistics(){
+
+        global $wpdb;
+
+        echo '<label><b>Terms</b></label>';
+        echo '<ul class="carbon-calculator-statistics">';
+        foreach ($this->options['taxonomies']??[] as $taxonomy){
+
+            $all_terms = get_terms(['taxonomy'=>$taxonomy, 'fields'=>'ids']);
+            $result = $wpdb->get_results("SELECT DISTINCT `term_id` from `$wpdb->termmeta` WHERE `meta_key` = 'calculated_carbon' AND `term_id` IN (".implode(',', $all_terms).")");
+            $result = array_map(function ($item){ return $item->term_id; }, $result);
+
+            $terms = array_diff($all_terms, $result);
+
+            $taxonomy = get_taxonomy($taxonomy);
+
+            echo '<li>'.
+                '<a href="'.admin_url('edit-tags.php?taxonomy='.$taxonomy->name).'">'.$taxonomy->label.'</a>'.
+                ' : <span>'.(round(count($result)/count($all_terms)*100)).'%</span> '.
+                (count($result)<count($all_terms)?'<a class="carbon-calculate carbon-calculator-complete" title="'.count($result).'/'.count($all_terms).'" data-type="term" data-completed="'.count($result).'" data-total="'.count($all_terms).'" data-ids="'.implode(',', $terms).'"><span>Complete</span></a>':'').
+                '</li>';
+        }
+        echo '</ul>';
+
+        echo '<label><b>Posts</b></label>';
+        echo '<ul class="carbon-calculator-statistics">';
+        foreach ($this->options['post_types']??[] as $post_type){
+
+            $all_posts = get_posts(['post_type'=>$post_type,'posts_per_page'=>-1, 'fields'=>'ids']);
+            $result = $wpdb->get_results("SELECT DISTINCT `post_id` from `$wpdb->postmeta` WHERE `meta_key` = 'calculated_carbon' AND `post_id` IN (".implode(',', $all_posts).")");
+            $result = array_map(function ($item){ return $item->post_id; }, $result);
+
+            $posts = array_diff($all_posts, $result);
+
+            $post_type = get_post_type_object($post_type);
+
+            echo '<li>'.
+                '<a href="'.admin_url('edit.php?post_type='.$post_type->name).'">'.$post_type->label.'</a>'.
+                ' : <span>'.(round(count($result)/count($all_posts)*100)).'%</span> '.
+                (count($result)<count($all_posts)?'<a class="carbon-calculate carbon-calculator-complete" title="'.count($result).'/'.count($all_posts).'" data-type="post" data-completed="'.count($result).'" data-total="'.count($all_posts).'" data-ids="'.implode(',', $posts).'"><span>Complete</span></a>':'').
+                '</li>';
+        }
+        echo '</ul>';
     }
 
     /**
@@ -102,6 +151,39 @@ class WCCSettings{
                                 Average website page emission
                             </em>
                         </p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Statistics</th>
+                    <td>
+                        <?php $this->getStatistics(); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Post types archive</th>
+                    <td class="carbon-calculators">
+                        <?php
+                        foreach ($post_types as $post_type){
+
+                            if( !$post_type->has_archive )
+                                continue;
+
+                            $computation = get_option($post_type->name . '::calculated_carbon_details');
+                            WCCActions::display_calculator_form($computation, 'archive', $post_type->name);
+                        }
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Other pages</th>
+                    <td class="carbon-calculators">
+                        <?php
+                        $computation = get_option('search::calculated_carbon_details');
+                        WCCActions::display_calculator_form($computation, 'search', '');
+
+                        $computation = get_option('404::calculated_carbon_details');
+                        WCCActions::display_calculator_form($computation, '404', '');
+                        ?>
                     </td>
                 </tr>
                 </tbody>
