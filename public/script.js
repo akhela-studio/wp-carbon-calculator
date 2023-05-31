@@ -32,7 +32,7 @@
                 .addClass('carbon-calculator--'+response['colorCode'])
         }
 
-        $('.carbon-calculate').click(function (){
+        $('.carbon-calculate-estimate').click(function (){
 
             var $button = $(this);
             var $parent = $button.parent('.carbon-calculator')
@@ -42,9 +42,6 @@
                 type: $button.data('type'),
                 id: $button.data('id')
             };
-
-            if( !data.id )
-                return;
 
             $button.addClass('is-loading');
 

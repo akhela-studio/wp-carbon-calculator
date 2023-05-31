@@ -387,7 +387,7 @@ class WCCActions{
                     <?=round($computation['co2PerPageview'],2)?>g eq. CO²
                 <?php endif; ?>
             </span>
-            <a class="carbon-calculate" data-type="<?=$type?>" data-id="<?=$id?>" role="button" title="Estimated computation time : 15s">
+            <a class="carbon-calculate carbon-calculate-estimate" data-type="<?=$type?>" data-id="<?=$id?>" role="button" title="Estimated computation time : 15s">
                 <span>Estimate</span>
             </a>
             <div class="carbon-calculator-details">
