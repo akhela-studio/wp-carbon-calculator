@@ -174,7 +174,7 @@ class WCCActions{
         elseif( $type == 'search' )
             $url = get_search_link($id);
         elseif( $type == '404' )
-            $url = '404';
+            $url = '/404';
 
         if( !$url || is_wp_error($url) ){
 
@@ -197,7 +197,13 @@ class WCCActions{
             $url = 'https://www.websitecarbon.com';
 
         //ensure generated cached version
-        wp_remote_get($url);
+        $response = wp_remote_get($url);
+
+        if( is_wp_error($response) ){
+
+            wp_send_json($response->get_error_message(), 500);
+            return;
+        }
 
         $websiteCarbonCalculator = new WebsiteCarbonCalculator($this->options['pagespeed_api_key']);
 
