@@ -10,7 +10,7 @@ class WCCActions{
     {
         add_action( 'password_protected_is_active', [$this, 'password_protected_is_active'] );
 
-        if( in_array($_SERVER['REMOTE_ADDR']??'127.0.0.1', ['127.0.0.1', '::1']) && !WCC_DEBUG )
+        if( !is_admin() || (in_array($_SERVER['REMOTE_ADDR']??'127.0.0.1', ['127.0.0.1', '::1']) && !WCC_DEBUG) )
             return;
 
         $this->options = get_option('carbon_calculator');
@@ -33,6 +33,7 @@ class WCCActions{
         }
 
         add_action( 'wp_ajax_carbon_calculate', [$this, 'carbon_calculate'] );
+        add_action( 'wp_ajax_reset_carbon_calculation', [$this, 'reset_carbon_calculation'] );
         add_action( 'wp_ajax_get_calculated_carbon', [$this, 'get_calculated_carbon'] );
     }
 
@@ -238,6 +239,32 @@ class WCCActions{
         }
     }
 
+
+    /**
+     * Compute carbon
+     */
+    public function reset_carbon_calculation()
+    {
+        global $wpdb;
+
+        $result = false;
+        $id = $_POST['id']??'';
+        $type = $_POST['type']??false;
+
+        if( $type == 'post' ){
+
+            $all_posts = get_posts(['post_type'=>$id,'posts_per_page'=>-1, 'fields'=>'ids']);
+            $result = $wpdb->query("DELETE FROM $wpdb->postmeta WHERE `post_id` IN (".implode(',', $all_posts).")");
+        }
+        elseif( $type == 'term' ){
+
+            $all_terms = get_terms(['taxonomy'=>$id, 'fields'=>'ids']);
+            $result = $wpdb->query("DELETE FROM $wpdb->termmeta WHERE `term_id` IN (".implode(',', $all_terms).")");
+        }
+
+        wp_send_json($result);
+    }
+
     /**
      * Compute carbon
      */
@@ -368,15 +395,15 @@ class WCCActions{
         <div class="carbon-calculator carbon-calculator--<?=$computation['colorCode']??'grey'?>">
 
             <?php if( $type == '404'): ?>
-                <label><a href="<?=get_home_url().'/404'?>" target="_blank">404</a></label>
+                <label><a href="<?=get_home_url().'/404'?>" target="_blank" class="dashicons-before dashicons-warning"> 404</a></label>
             <?php elseif( $type == 'search'): ?>
-                <label><a href="<?=get_search_link()?>" target="_blank">Search</a></label>
+                <label><a href="<?=get_search_link()?>" target="_blank" class="dashicons-before dashicons-search"> Search</a></label>
             <?php elseif( $type == 'term'): ?>
                 <label>Carbon Calculator</label>
             <?php elseif( $type == 'archive'):
                 $post_type = get_post_type_object($id);
                 ?>
-                <label><a href="<?=get_post_type_archive_link($post_type->name)?>" target="_blank"><?=$post_type->label?></a></label>
+                <label><a class="dashicons-before <?=$post_type->menu_icon?>" href="<?=get_post_type_archive_link($post_type->name)?>" target="_blank"> <?=$post_type->label?></a></label>
             <?php endif; ?>
             <div class="carbon-calculator-progressbar">
                 <div class="carbon-calculator-progress" style="width: <?=(($computation['co2PerPageview']??0)/$reference*100)?>%"></div>

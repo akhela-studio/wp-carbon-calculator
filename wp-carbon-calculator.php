@@ -27,6 +27,7 @@ class WCC{
     public function __construct() {
 
         include 'includes/settings.php';
+        include 'includes/tools.php';
         include 'includes/actions.php';
 
         // Initialize Variables

@@ -11,6 +11,7 @@
 .carbon-calculator label a{ text-decoration: none; color: inherit }
 .carbon-calculator-display{ font-weight: 500 }
 .carbon-calculator-progressbar{ height: 5px; border-radius: 10px; background: #eee; position: relative; margin-top: 20px; margin-bottom: 10px }
+.carbon-calculators .carbon-calculator{ width: 80% }
 .carbon-calculators .carbon-calculator-progressbar{ background: #fff; margin-top: 10px }
 #edittag .carbon-calculator-progressbar{ background: #fff; margin-top: 10px }
 .carbon-calculator-progress{ height: 100%; border-radius: 10px; max-width: 100%; transition: 0.3s }
@@ -23,11 +24,16 @@
     content: ""; width: 30px; height: 8px; margin-left: 10px; display: inline-block;
     background: url("loader.svg") no-repeat center; background-size: contain
 }
+.carbon-calculator-tools td{ padding-top: 40px }
+.carbon-calculator-tools label b{ font-size: 110% }
 #side-sortables .carbon-calculate.is-loading:after{
     margin-left: 0; background-image: url("loader-white.svg")
 }
+.carbon-calculator-statistics li{ margin-bottom: 12px }
 .carbon-calculator-statistics a{ color: inherit; text-decoration: none }
-.carbon-calculator-statistics a:hover, .carbon-calculator-statistics .carbon-calculator-complete{ color: #2271b1; text-decoration: underline }
+.carbon-calculator-tools .dashicons-before:before{ vertical-align: middle }
+.carbon-calculator-statistics a:hover, .carbon-calculator-statistics .carbon-calculator-complete,
+.carbon-calculator-statistics .carbon-calculator-reset{ color: #2271b1; text-decoration: underline }
 
 
 #edittag .carbon-calculate{ float: right }

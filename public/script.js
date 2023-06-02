@@ -109,6 +109,24 @@
             completeComputation()
         })
 
+        $('.carbon-calculator-reset').click(function (){
+
+            var $button = $(this)
+            $button.addClass('is-loading');
+
+            var data = {
+                action: 'reset_carbon_calculation',
+                type: $button.data('type'),
+                id: $button.data('id')
+            };
+
+            $.post(wp_carbon_calculator.ajax_url, data, function(response) {
+
+                document.location.reload()
+            });
+
+        })
+
         if( wp && wp.data ){
 
             var currentPostLastRevisionId = null;
