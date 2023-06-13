@@ -71,7 +71,7 @@
             var $button = $(this)
             var $estimation = $button.prev()
 
-            var ids = $button.data('ids').split(',')
+            var ids = $button.data('ids').toString().split(',')
 
             var completed = parseInt($button.data('completed'))
             var total = parseInt($button.data('total'))
