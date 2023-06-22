@@ -133,6 +133,9 @@
 
             wp.data.subscribe(() => {
 
+                if( !wp.data.select('core/editor') )
+                    return;
+
                 var currentPostRevisionId = wp.data.select('core/editor').getCurrentPostLastRevisionId()
 
                 if (currentPostLastRevisionId !== currentPostRevisionId ) {
