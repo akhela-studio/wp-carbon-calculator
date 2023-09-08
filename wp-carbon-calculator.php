@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Website carbon calculator
  * Description: Estimate your web page carbon footprint
- * Version: 1.1.3
+ * Version: 1.1.4
  * Author: Akhela
  * Author URI: http://www.akhela.fr
  */
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) )
 
 require __DIR__ . '/vendor/autoload.php';
 
-define('WCC_VERSION', '1.1.3');
+define('WCC_VERSION', '1.1.4');
 
 if( !defined('WCC_DEBUG') )
     define('WCC_DEBUG', false);

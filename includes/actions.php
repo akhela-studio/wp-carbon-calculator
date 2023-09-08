@@ -94,12 +94,12 @@ class WCCActions{
      * @return string
      */public function password_protected_is_active($bool) {
 
-        if ( strpos($_SERVER['HTTP_USER_AGENT']??'', 'Lighthouse') !== false  || in_array($_SERVER['REMOTE_ADDR']??'127.0.0.1', ['127.0.0.1', '::1']) ) {
-            $bool = false;
-        }
-
-        return $bool;
+    if ( strpos($_SERVER['HTTP_USER_AGENT']??'', 'Lighthouse') !== false  || in_array($_SERVER['REMOTE_ADDR']??'127.0.0.1', ['127.0.0.1', '::1']) ) {
+        $bool = false;
     }
+
+    return $bool;
+}
 
     /**
      * @return void
@@ -183,13 +183,16 @@ class WCCActions{
             return;
         }
 
-        if( $this->get_meta($type, $id, 'calculating_carbon') ){
+        if( $time = $this->get_meta($type, $id, 'calculating_carbon') ){
 
-            wp_send_json('Computation is in progress, please wait and reload the page', 500);
-            return;
+            if( $time+120 < time() ){
+                
+                wp_send_json('Computation is in progress, please wait and reload the page or retry in two minutes', 500);
+                return;
+            }
         }
 
-        $this->save_meta($type, $id, 'calculating_carbon', true);
+        $this->save_meta($type, $id, 'calculating_carbon', time());
 
         $base_url = is_multisite() ? network_home_url() : get_home_url();
         $url = rtrim($base_url, '/').wp_make_link_relative($url);
