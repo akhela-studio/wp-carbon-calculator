@@ -185,7 +185,7 @@ class WCCActions{
 
         if( $time = $this->get_meta($type, $id, 'calculating_carbon') ){
 
-            if( $time+120 < time() ){
+            if( $time+120 > time() ){
                 
                 wp_send_json('Computation is in progress, please wait and reload the page or retry in two minutes', 500);
                 return;
