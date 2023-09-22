@@ -9,13 +9,14 @@ class WCCActions{
     public function __construct()
     {
         add_action( 'password_protected_is_active', [$this, 'password_protected_is_active'] );
+        add_action( '_wp_put_post_revision', [$this, 'post_revision_updated'] );
+        add_filter( 'posts_results', [$this, 'preview_access'], 10, 2 );
 
         if( !is_admin() || (in_array($_SERVER['REMOTE_ADDR']??'127.0.0.1', ['127.0.0.1', '::1']) && !WCC_DEBUG) )
             return;
 
         $this->options = get_option('carbon_calculator');
 
-        add_action( '_wp_put_post_revision', [$this, 'post_revision_updated'] );
         add_action( 'add_meta_boxes', [$this, 'add_meta_boxes'] );
 
         foreach ($this->options['taxonomies']??[] as $taxonomy){
@@ -38,14 +39,37 @@ class WCCActions{
     }
 
     /**
+     * @param $posts
+     * @return mixed
+     */
+    public function preview_access($posts ) {
+
+        if ( !count($posts) )
+            return $posts;
+
+        $post = $posts[0];
+
+        if( is_main_query() && in_array($post->post_status, ['draft', 'pending', 'future']) && $this->allowAccess() )
+            $post->post_status = 'publish';
+
+        return $posts;
+    }
+
+    /**
      * @param $revision_id
      */
     public function post_revision_updated($revision_id) {
 
         $post = wp_get_post_revision($revision_id);
 
-        delete_post_meta($post->post_parent, 'calculated_carbon_details');
-        delete_post_meta($post->post_parent, 'calculated_carbon');
+        if( get_post_meta($post->post_parent, 'calculated_carbon', true) ){
+
+            delete_post_meta($post->post_parent, 'calculated_carbon_details');
+            delete_post_meta($post->post_parent, 'calculated_carbon');
+
+            update_post_meta($post->post_parent, 'calculated_carbon_pending', true);
+
+        }
     }
 
     /**
@@ -92,14 +116,20 @@ class WCCActions{
 
     /**
      * @return string
-     */public function password_protected_is_active($bool) {
+     */
+    public function password_protected_is_active($bool) {
 
-    if ( strpos($_SERVER['HTTP_USER_AGENT']??'', 'Lighthouse') !== false  || in_array($_SERVER['REMOTE_ADDR']??'127.0.0.1', ['127.0.0.1', '::1']) ) {
-        $bool = false;
+        if ( $this->allowAccess() )
+            return false;
+
+        return $bool;
     }
 
-    return $bool;
-}
+
+    private function allowAccess(){
+
+        return wp_hash('carbon_calculate') == ($_GET['hash']??'') || in_array($_SERVER['REMOTE_ADDR']??'127.0.0.1', ['127.0.0.1', '::1']);
+    }
 
     /**
      * @return void
@@ -179,7 +209,7 @@ class WCCActions{
 
         if( !$url || is_wp_error($url) ){
 
-            wp_send_json('Url not found', 404);
+            wp_send_json(['in_progress'=>false, 'error'=>'Url not found'], 500);
             return;
         }
 
@@ -187,7 +217,7 @@ class WCCActions{
 
             if( $time+120 > time() ){
                 
-                wp_send_json('Computation is in progress, please wait and reload the page or retry in two minutes', 500);
+                wp_send_json(['in_progress'=>true], 500);
                 return;
             }
         }
@@ -205,13 +235,15 @@ class WCCActions{
 
         if( is_wp_error($response) ){
 
-            wp_send_json($response->get_error_message(), 500);
+            wp_send_json(['in_progress'=>false, 'error'=>$response->get_error_message()], 500);
             return;
         }
 
         $websiteCarbonCalculator = new WebsiteCarbonCalculator($this->options['pagespeed_api_key']);
 
         try {
+
+            $url = add_query_arg('hash', wp_hash('carbon_calculate'), $url);
 
             $computation = $websiteCarbonCalculator->calculateByURL($url, ['isGreenHost' => $this->options['is_green_host']??false]);
             $co2 = $computation['co2PerPageview'];
@@ -238,7 +270,7 @@ class WCCActions{
 
             $this->delete_meta($type, $id, 'calculating_carbon');
 
-            wp_send_json($t->getMessage(), 500);
+            wp_send_json(['in_progress'=>false, 'error'=>$t->getMessage()], 500);
         }
     }
 
@@ -276,11 +308,25 @@ class WCCActions{
         $id = $_POST['id']??'';
         $type = $_POST['type']??false;
 
-        if( $computation = $this->get_meta($type, $id, 'calculated_carbon_details') )
-            wp_send_json($computation);
-        else
-            wp_send_json(['co2PerPageview'=>0, 'colorCode'=>'grey']);
+        if( $time = $this->get_meta($type, $id, 'calculating_carbon') ){
 
+            if( $time+120 < time() )
+                $this->delete_meta($type, $id, 'calculating_carbon');
+
+            wp_send_json(['in_progress'=>true], 500);
+        }
+        elseif( $computation = $this->get_meta($type, $id, 'calculated_carbon_details') ){
+
+            wp_send_json($computation);
+        }
+        elseif( $this->get_meta($type, $id, 'calculated_carbon_pending') ){
+
+            $this->carbon_calculate();
+        }
+        else{
+
+            wp_send_json(['co2PerPageview'=>0, 'colorCode'=>'grey']);
+        }
     }
 
     /**
@@ -394,6 +440,7 @@ class WCCActions{
 
         $options = get_option('carbon_calculator');
         $reference = floatval($options['reference']??0.55);
+        $is_block_editor = get_current_screen()->is_block_editor();
         ?>
         <div class="carbon-calculator carbon-calculator--<?=$computation['colorCode']??'grey'?>">
 
@@ -417,15 +464,16 @@ class WCCActions{
                     <?=$reference?> g eq. CO²
                 </div>
             </div>
-            <span class="carbon-calculator-title">Footprint :</span>
+            <span class="carbon-calculator-title">Impact :</span>
             <span class="carbon-calculator-display" title="per page view">
                 <?php if($computation):?>
                     <?=round($computation['co2PerPageview'],2)?>g eq. CO²
                 <?php endif; ?>
             </span>
-            <a class="carbon-calculate carbon-calculate-estimate" data-type="<?=$type?>" data-id="<?=$id?>" role="button" title="Estimated computation time : 15s">
+            <button class="carbon-calculate carbon-calculate-estimate <?=$is_block_editor?'components-button is-primary':'button button-primary'?>" data-type="<?=$type?>" data-id="<?=$id?>" role="button" title="Estimated computation time : 15s">
                 <span>Estimate</span>
-            </a>
+                <span>Estimating…</span>
+            </button>
             <div class="carbon-calculator-details">
                 <span>
                     <?php if($computation):?>

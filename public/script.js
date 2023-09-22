@@ -32,31 +32,43 @@
                 .addClass('carbon-calculator--'+response['colorCode'])
         }
 
-        $('.carbon-calculate-estimate').click(function (){
+        function doRequest($button, method){
 
-            var $button = $(this);
             var $parent = $button.parent('.carbon-calculator')
 
             var data = {
-                action: 'carbon_calculate',
+                action: method,
                 type: $button.data('type'),
                 id: $button.data('id')
             };
 
-            $button.addClass('is-loading');
+            $button.addClass('is-busy').attr('disabled', true);
 
             $.post(wp_carbon_calculator.ajax_url, data, function(response) {
 
-                $button.removeClass('is-loading');
+                $button.removeClass('is-busy').attr('disabled', false);
 
                 updateComputation(response, $parent)
 
             }).fail(function(xhr, status, error) {
 
-                $button.removeClass('is-loading');
+                if( xhr.responseJSON.in_progress ){
 
-                alert(xhr.responseJSON)
+                    setTimeout(function (){
+                        doRequest($button, 'get_calculated_carbon')
+                    }, 2000)
+                }
+                else{
+
+                    $button.removeClass('is-busy').attr('disabled', false);
+                    alert(xhr.responseJSON.error)
+                }
             });
+        }
+
+        $('.carbon-calculate-estimate').click(function (){
+
+            doRequest( $(this), 'carbon_calculate' );
         })
 
         $('.carbon-calculator-display').click(function (){
@@ -138,22 +150,8 @@
 
                 var currentPostRevisionId = wp.data.select('core/editor').getCurrentPostLastRevisionId()
 
-                if (currentPostLastRevisionId !== currentPostRevisionId ) {
-
-                    var $button = $('.carbon-calculate');
-                    var $parent = $('.carbon-calculator');
-
-                    var data = {
-                        action: 'get_calculated_carbon',
-                        type: $button.data('type'),
-                        id: $button.data('id')
-                    };
-
-                    $.post(wp_carbon_calculator.ajax_url, data, function(response) {
-
-                        updateComputation(response, $parent)
-                    });
-                }
+                if (currentPostLastRevisionId !== currentPostRevisionId )
+                    doRequest( $('.carbon-calculate'), 'get_calculated_carbon' );
 
                 currentPostLastRevisionId = currentPostRevisionId
             });

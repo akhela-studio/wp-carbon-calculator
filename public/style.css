@@ -40,30 +40,31 @@
 #edittag .carbon-calculator{ margin-top: 1em }
 .carbon-calculator-details{ max-width: 480px; display: none }
 #side-sortables .carbon-calculator-details{ max-width: none; clear: both }
-.carbon-calculator-display{ margin-right: 5px; cursor: pointer }
+.carbon-calculator-display{ cursor: pointer }
 .carbon-calculator-display:after{ content: "\f140"; display: inline-block; font: normal 20px/1 dashicons; vertical-align: middle }
 .carbon-calculator-display.is-active:after{ content: "\f142" }
 .carbon-calculator-details span span{ flex-basis: 50%; padding: 4px 0; box-sizing: border-box }
 #side-sortables .carbon-calculator-title{ padding-top: 5px; display: inline-block; margin-bottom: 10px }
 #side-sortables .carbon-calculator-details span span{ flex-basis: 100% }
 #side-sortables .carbon-calculate{
-    background: var(--wp-components-color-accent, var(--wp-admin-theme-color, #007cba)); text-decoration: none;
-    color: var(--wp-components-color-accent-inverted, #fff); border-radius: 2px; padding: 6px 12px; float: right;
+    float: right; height: 18px;
 }
 #side-sortables .carbon-calculator--grey .carbon-calculate{
     background: none; text-decoration: underline;
     color:#2271b1; padding: 0; float: none;
 }
-#side-sortables .carbon-calculator--grey .carbon-calculate.is-loading:after{
-    background-image: url("loader.svg"); margin-left: 10px;
-}
+.carbon-calculate{ text-decoration: none }
+.carbon-calculate.is-busy span{ display: none }
+.carbon-calculate span+span{ display: none }
+.carbon-calculate.is-busy span+span{ display: inline }
+
 .misc-pub-carbon-calculator .carbon-calculator-details span span{ flex-basis: 100% }
 .carbon-calculator-details > span{
     display: flex; flex-wrap: wrap; margin-top: 5px; background: #fff; border-radius: 4px; padding: 8px 12px;
     font-family: monospace; font-size: 12px;
 }
 #side-sortables .carbon-calculator-details > span{
-    background: #eee; width: 100%; margin-top: 0; box-sizing: border-box;
+    background: #f0f0f0; width: 100%; margin-top: 0; box-sizing: border-box;
 }
 .misc-pub-carbon-calculator .carbon-calculator-details > span{
     background: none; box-shadow: none; padding: 0;
