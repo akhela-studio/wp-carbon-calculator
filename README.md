@@ -85,3 +85,7 @@ Here's a glimpse of what's coming:
 - translations
 - ecoindex.fr algorithm support
 - better settings/tools interface
+
+### Licence
+
+GPL 3.0 or later
