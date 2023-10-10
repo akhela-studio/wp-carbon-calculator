@@ -4,7 +4,7 @@
  * Description: Estimate your web page carbon footprint
  * Version: 1.1.5
  * Author: Akhela
- * Author URI: http://www.akhela.fr
+ * Author URI: https://www.akhela.fr
  */
 
 if ( ! defined( 'ABSPATH' ) )
