@@ -38,21 +38,21 @@ $ composer require akhela/wp-carbon-calculator
 
 ### Interface
 
-**Tools**
-
-![Tools](https://github.com/akhela-studio/wp-carbon-calculator/assets/4919596/7deaf40e-22e7-4316-8c51-893c1e3709e4)
-
-**Settings**
-
-![Settings](https://github.com/akhela-studio/wp-carbon-calculator/assets/4919596/0014696b-a295-4d49-aac5-6b039bf0097e)
-
 **Summary**
 
-![Summary](https://github.com/akhela-studio/wp-carbon-calculator/assets/4919596/7fbc18c0-9b35-4e4e-9a44-3fa6684299a1)
+![Summary](https://github.com/akhela-studio/wp-carbon-calculator/assets/4919596/da38f0a5-e028-4d86-a070-b7cb548ceebc)
 
 **Calculator**
 
-![Calculator](https://github.com/akhela-studio/wp-carbon-calculator/assets/4919596/d7a45b4c-d6eb-4357-b7fa-7d5e9f29b24d)
+![Calculator](https://github.com/akhela-studio/wp-carbon-calculator/assets/4919596/3bd53fe8-3c33-4628-afff-1f447727d331)
+
+**Tools**
+
+![Tools](https://github.com/akhela-studio/wp-carbon-calculator/assets/4919596/2eb6d38e-0f5e-473a-9245-7381a6f3fb55)
+
+**Settings**
+
+![Settings](https://github.com/akhela-studio/wp-carbon-calculator/assets/4919596/381d6e2f-48fd-4250-8c85-b331ea25fe57)
 
 ### How to display it in your templates ?
 
