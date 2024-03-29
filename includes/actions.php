@@ -239,6 +239,10 @@ class WCCActions{
             return;
         }
 
+        //load library
+        if( !class_exists('Akhela\WebsiteCarbonCalculator\WebsiteCarbonCalculator') )
+            require __DIR__ . '/../vendor/autoload.php';
+
         $websiteCarbonCalculator = new WebsiteCarbonCalculator($this->options['pagespeed_api_key']);
 
         try {
