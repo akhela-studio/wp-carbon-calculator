@@ -40,19 +40,19 @@ $ composer require akhela/wp-carbon-calculator
 
 **Summary**
 
-![Summary](https://github.com/akhela-studio/wp-carbon-calculator/assets/4919596/da38f0a5-e028-4d86-a070-b7cb548ceebc)
+![Summary](/public/screenshots/summary.png)
 
 **Calculator**
 
-![Calculator](https://github.com/akhela-studio/wp-carbon-calculator/assets/4919596/3bd53fe8-3c33-4628-afff-1f447727d331)
+![Calculator](/public/screenshots/calculator.png)
 
 **Tools**
 
-![Tools](https://github.com/akhela-studio/wp-carbon-calculator/assets/4919596/2eb6d38e-0f5e-473a-9245-7381a6f3fb55)
+![Tools](/public/screenshots/tools.png)
 
 **Settings**
 
-![Settings](https://github.com/akhela-studio/wp-carbon-calculator/assets/4919596/381d6e2f-48fd-4250-8c85-b331ea25fe57)
+![Settings](/public/screenshots/settings.png)
 
 ### How to display it in your templates ?
 

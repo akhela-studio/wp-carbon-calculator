@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name: Website carbon calculator
- * Description: Estimate your web page carbon footprint
+ * Plugin Name: Carbon Calculator
+ * Description: Effortlessly calculate the CO₂ impact of any page on your website directly from your WordPress admin panel.
  * Version: 1.1.6
  * Author: Akhela
  * Author URI: https://www.akhela.fr
