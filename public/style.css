@@ -13,6 +13,7 @@
 .carbon-calculator-progressbar{ height: 5px; border-radius: 10px; background: #eee; position: relative; margin-top: 20px; margin-bottom: 10px }
 .carbon-calculators .carbon-calculator{ width: 80% }
 .carbon-calculators .carbon-calculator-progressbar{ background: #fff; margin-top: 10px }
+.carbon-calculators .carbon-calculate-estimate{ float: right }
 #edittag .carbon-calculator-progressbar{ background: #fff; margin-top: 10px }
 .carbon-calculator-progress{ height: 100%; border-radius: 10px; max-width: 100%; transition: 0.3s }
 .carbon-calculator-progressinfo{ position: absolute; right: 0; bottom: 100%; font-size: 12px; opacity: 0.7 }

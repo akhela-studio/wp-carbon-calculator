@@ -92,7 +92,7 @@ class WCCActions{
             $computation = get_post_meta($item_id,'calculated_carbon_details', true);
 
             if( $computation )
-                echo '<a class="wcc-badge wcc-badge--'.$computation['colorCode'].'" title="'.round(($computation['co2PerPageview']??0),2).' g eq. CO²"/>';
+                echo '<a class="wcc-badge wcc-badge--'.esc_attr($computation['colorCode']).'" title="'.esc_attr(round(($computation['co2PerPageview']??0),2)).' g eq. CO²"/>';
             else
                 echo '<a class="wcc-badge wcc-badge--grey"/>';
         }
@@ -108,7 +108,7 @@ class WCCActions{
             $computation = get_term_meta($item_id,'calculated_carbon_details', true);
 
             if( $computation )
-                echo '<a class="wcc-badge wcc-badge--'.$computation['colorCode'].'" title="'.round(($computation['co2PerPageview']??0),2).' g eq. CO²"/>';
+                echo '<a class="wcc-badge wcc-badge--'.esc_attr($computation['colorCode']).'" title="'.esc_attr(round(($computation['co2PerPageview']??0),2)).' g eq. CO²"/>';
             else
                 echo '<a class="wcc-badge wcc-badge--grey"/>';
         }
@@ -128,7 +128,8 @@ class WCCActions{
 
     private function allowAccess(){
 
-        return wp_hash('carbon_calculate') == ($_GET['hash']??'') || in_array($_SERVER['REMOTE_ADDR']??'127.0.0.1', ['127.0.0.1', '::1']);
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        return wp_hash('carbon_calculate') == sanitize_text_field(wp_unslash($_GET['hash']??'')) || in_array($_SERVER['REMOTE_ADDR']??'127.0.0.1', ['127.0.0.1', '::1']);
     }
 
     /**
@@ -140,7 +141,7 @@ class WCCActions{
 
             add_meta_box(
                 'wpc',
-                __( 'Carbon calculator', 'wcc' ),
+                __( 'Carbon calculator', 'wp-carbon-calculator' ),
                 [$this, 'add_meta_box'],
                 $post_type,
                 'side',
@@ -190,8 +191,14 @@ class WCCActions{
     public function carbon_calculate()
     {
         $url = false;
-        $id = $_POST['id']??'';
-        $type = $_POST['type']??false;
+
+        $nonce = sanitize_text_field(wp_unslash($_POST['nonce']??''));
+
+        if( !wp_verify_nonce($nonce, 'carbon-calculator') )
+            wp_send_json(['in_progress'=>false, 'error'=>'Nonce not valid'], 500);
+
+        $id = sanitize_text_field(wp_unslash($_POST['id']??''));
+        $type = sanitize_text_field(wp_unslash($_POST['type']??false));
         $reference = floatval($this->options['reference']);
 
         ignore_user_abort(true);
@@ -284,21 +291,48 @@ class WCCActions{
      */
     public function reset_carbon_calculation()
     {
+        $nonce = sanitize_text_field(wp_unslash($_POST['nonce']??''));
+
+        if( !wp_verify_nonce($nonce, 'carbon-calculator') )
+            wp_send_json(['in_progress'=>false, 'error'=>'Nonce not valid'], 500);
+
         global $wpdb;
 
         $result = false;
-        $id = $_POST['id']??'';
-        $type = $_POST['type']??false;
+        $id = sanitize_text_field(wp_unslash($_POST['id']??''));
+        $type = sanitize_text_field(wp_unslash($_POST['type']??false));
 
         if( $type == 'post' ){
 
             $all_posts = get_posts(['post_type'=>$id,'posts_per_page'=>-1, 'fields'=>'ids']);
-            $result = $wpdb->query("DELETE FROM $wpdb->postmeta WHERE `post_id` IN (".implode(',', $all_posts).")");
+            $placeholders = implode( ', ', array_fill( 0, count( $all_posts ), '%d' ) );
+            $args = array_merge($all_posts, ['calculated_carbon%']);
+
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
+            $result = $wpdb->query(
+                    $wpdb->remove_placeholder_escape(
+                    // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+                            $wpdb->prepare("DELETE FROM $wpdb->postmeta WHERE `post_id` IN (".$placeholders.") AND `meta_key` LIKE %s", $args)
+                    )
+            );
+
+            wp_cache_delete_multiple( $all_posts, 'post_meta' );
         }
         elseif( $type == 'term' ){
 
             $all_terms = get_terms(['taxonomy'=>$id, 'fields'=>'ids']);
-            $result = $wpdb->query("DELETE FROM $wpdb->termmeta WHERE `term_id` IN (".implode(',', $all_terms).")");
+            $placeholders = implode( ', ', array_fill( 0, count( $all_terms ), '%d' ) );
+            $args = array_merge($all_terms, ['calculated_carbon%']);
+
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
+            $result = $wpdb->query(
+                    $wpdb->remove_placeholder_escape(
+                    // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+                            $wpdb->prepare("DELETE FROM $wpdb->termmeta WHERE `term_id` IN (".$placeholders.") AND `meta_key` LIKE %s", $args)
+                    )
+            );
+
+            wp_cache_delete_multiple( $all_terms, 'term_meta' );
         }
 
         wp_send_json($result);
@@ -309,8 +343,13 @@ class WCCActions{
      */
     public function get_calculated_carbon()
     {
-        $id = $_POST['id']??'';
-        $type = $_POST['type']??false;
+        $nonce = sanitize_text_field(wp_unslash($_POST['nonce']??''));
+
+        if( !wp_verify_nonce($nonce, 'carbon-calculator') )
+            wp_send_json(['in_progress'=>false, 'error'=>'Nonce not valid'], 500);
+
+        $id = sanitize_text_field(wp_unslash($_POST['id']??''));
+        $type = sanitize_text_field(wp_unslash($_POST['type']??false));
 
         if( $time = $this->get_meta($type, $id, 'calculating_carbon') ){
 
@@ -446,35 +485,35 @@ class WCCActions{
         $reference = floatval($options['reference']??0.55);
         $is_block_editor = get_current_screen()->is_block_editor();
         ?>
-        <div class="carbon-calculator carbon-calculator--<?=$computation['colorCode']??'grey'?>">
+        <div class="carbon-calculator carbon-calculator--<?php echo esc_attr($computation['colorCode']??'grey'); ?>">
 
             <?php if( $type == '404'): ?>
-                <label><a href="<?=get_home_url().'/404'?>" target="_blank" class="dashicons-before dashicons-warning"> 404</a></label>
+                <label><a href="<?php echo esc_url(get_home_url().'/404'); ?>" target="_blank" class="dashicons-before dashicons-warning"> 404</a></label>
             <?php elseif( $type == 'search'): ?>
-                <label><a href="<?=get_search_link()?>" target="_blank" class="dashicons-before dashicons-search"> Search</a></label>
+                <label><a href="<?php echo esc_url(get_search_link()); ?>" target="_blank" class="dashicons-before dashicons-search"> Search</a></label>
             <?php elseif( $type == 'term'): ?>
                 <label>Carbon Calculator</label>
             <?php elseif( $type == 'archive'):
                 $post_type = get_post_type_object($id);
                 ?>
-                <label><a class="dashicons-before <?=$post_type->menu_icon?>" href="<?=get_post_type_archive_link($post_type->name)?>" target="_blank"> <?=$post_type->label?></a></label>
+                <label><a class="dashicons-before <?php echo esc_attr($post_type->menu_icon); ?>" href="<?php echo esc_url(get_post_type_archive_link($post_type->name)); ?>" target="_blank"> <?php echo esc_html($post_type->label); ?></a></label>
             <?php endif; ?>
             <div class="carbon-calculator-progressbar">
-                <div class="carbon-calculator-progress" style="width: <?=(($computation['co2PerPageview']??0)/$reference*100)?>%"></div>
+                <div class="carbon-calculator-progress" style="width: <?php echo esc_attr((($computation['co2PerPageview']??0)/$reference*100)); ?>%"></div>
                 <div class="carbon-calculator-progressinfo">
                     <?php if($computation):?>
-                        <?=round(($computation['co2PerPageview']??0),2)?> /
+                        <?php echo esc_html(round(($computation['co2PerPageview']??0),2)); ?> /
                     <?php endif; ?>
-                    <?=$reference?> g eq. CO²
+                    <?php echo esc_html($reference); ?> g eq. CO²
                 </div>
             </div>
             <span class="carbon-calculator-title">Impact :</span>
             <span class="carbon-calculator-display" title="per page view">
                 <?php if($computation):?>
-                    <?=round($computation['co2PerPageview'],2)?>g eq. CO²
+                    <?php echo esc_html(round($computation['co2PerPageview'],2)); ?>g eq. CO²
                 <?php endif; ?>
             </span>
-            <button class="carbon-calculate carbon-calculate-estimate <?=$is_block_editor?'components-button is-primary':'button button-primary'?>" data-type="<?=$type?>" data-id="<?=$id?>" role="button" title="Estimated computation time : 15s">
+            <button class="carbon-calculate carbon-calculate-estimate <?php echo esc_attr($is_block_editor?'components-button is-primary':'button button-primary'); ?>" data-type="<?php echo esc_attr($type); ?>" data-nonce="<?php echo esc_attr(wp_create_nonce('carbon-calculator'));?>" data-id="<?php echo esc_attr($id); ?>" role="button" title="Estimated computation time : 15s">
                 <span>Estimate</span>
                 <span>Estimating…</span>
             </button>
@@ -483,7 +522,7 @@ class WCCActions{
                     <?php if($computation):?>
                         <?php foreach ($computation as $key=>$value) :?>
                             <?php if( $key != 'co2PerPageview'):?>
-                                <span><?=$key?> : <b><?=$value?></b></span>
+                                <span><?php echo esc_html($key); ?> : <b><?php echo esc_html($value); ?></b></span>
                             <?php endif; ?>
                         <?php endforeach; ?>
                     <?php endif; ?>

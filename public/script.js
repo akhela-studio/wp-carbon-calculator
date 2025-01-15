@@ -39,6 +39,7 @@
             var data = {
                 action: method,
                 type: $button.data('type'),
+                nonce: $button.data('nonce'),
                 id: $button.data('id')
             };
 
@@ -95,6 +96,7 @@
                 var data = {
                     action: 'carbon_calculate',
                     type: $button.data('type'),
+                    nonce: $button.data('nonce'),
                     id: ids[current_index]
                 };
 
@@ -129,6 +131,7 @@
             var data = {
                 action: 'reset_carbon_calculation',
                 type: $button.data('type'),
+                nonce: $button.data('nonce'),
                 id: $button.data('id')
             };
 

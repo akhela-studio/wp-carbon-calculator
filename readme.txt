@@ -1,5 +1,5 @@
-=== Carbon Calculator - Calculate the CO₂ impact of your website from your backoffice ===
-Plugin Name: Carbon Calculator
+=== WP Carbon Calculator ===
+Plugin Name: WP Carbon Calculator
 Description: Effortlessly calculate the CO₂ impact of any page on your website directly from your WordPress admin panel.
 Contributors: akhelastudio
 Donate link: https://buymeacoffee.com/akhela

@@ -18,12 +18,18 @@ class WCCTools{
 
         global $wpdb;
 
+        $nonce = wp_create_nonce('carbon-calculator');
+
         echo '<label><b>Terms</b></label>';
         echo '<ul class="carbon-calculator-statistics">';
         foreach ($this->options['taxonomies']??[] as $taxonomy){
 
             $all_terms = get_terms(['taxonomy'=>$taxonomy, 'fields'=>'ids']);
-            $result = $wpdb->get_results("SELECT DISTINCT `term_id` from `$wpdb->termmeta` WHERE `meta_key` = 'calculated_carbon' AND `term_id` IN (".implode(',', $all_terms).")");
+            $placeholders = implode( ', ', array_fill( 0, count( $all_terms ), '%d' ) );
+
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery.DirectQuery
+            $result = $wpdb->get_results($wpdb->prepare("SELECT DISTINCT `term_id` from `$wpdb->termmeta` WHERE `meta_key` = 'calculated_carbon' AND `term_id` IN (".$placeholders.")", $all_terms));
+
             $result = array_map(function ($item){ return $item->term_id; }, $result);
 
             $terms = array_diff($all_terms, $result);
@@ -31,11 +37,11 @@ class WCCTools{
             $taxonomy = get_taxonomy($taxonomy);
 
             echo '<li>'.
-                '<a href="'.admin_url('edit-tags.php?taxonomy='.$taxonomy->name).'" class="dashicons-before dashicons-category"> '.$taxonomy->label.'</a>'.
-                ' : <span>'.(round(count($result)/count($all_terms)*100)).'%</span> '.
-                (count($result)<count($all_terms)?'<a class="carbon-calculate carbon-calculator-complete" title="'.count($result).'/'.count($all_terms).'" data-type="term" data-completed="'.count($result).'" data-total="'.count($all_terms).'" data-ids="'.implode(',', $terms).'"><span>Complete</span></a>':'').
+                '<a href="'.esc_url(admin_url('edit-tags.php?taxonomy='.$taxonomy->name)).'" class="dashicons-before dashicons-category"> '.esc_html($taxonomy->label).'</a>'.
+                ' : <span>'.esc_html(round(count($result)/count($all_terms)*100)).'%</span> '.
+                (count($result)<count($all_terms)?'<a class="carbon-calculate carbon-calculator-complete" title="'.esc_attr(count($result).'/'.count($all_terms)).'" data-type="term" data-nonce="'.esc_attr($nonce).'" data-completed="'.esc_attr(count($result)).'" data-total="'.esc_attr(count($all_terms)).'" data-ids="'.esc_attr(implode(',', $terms)).'"><span>Complete</span></a>':'').
                 (count($result)<count($all_terms) && count($result)?' | ':'').
-                (count($result)?'<a class="carbon-calculate carbon-calculator-reset" data-type="term" data-id="'.$taxonomy->name.'"><span>Reset</span></a>':'').
+                (count($result)?'<a class="carbon-calculate carbon-calculator-reset" data-type="term" data-nonce="'.esc_attr($nonce).'" data-id="'.esc_attr($taxonomy->name).'"><span>Reset</span></a>':'').
                 '</li>';
         }
         echo '</ul>';
@@ -51,7 +57,11 @@ class WCCTools{
             if( !count($all_posts) )
                 continue;
 
-            $result = $wpdb->get_results("SELECT DISTINCT `post_id` from `$wpdb->postmeta` WHERE `meta_key` = 'calculated_carbon' AND `post_id` IN (".implode(',', $all_posts).")");
+            $placeholders = implode( ', ', array_fill( 0, count( $all_posts ), '%d' ) );
+
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery.DirectQuery
+            $result = $wpdb->get_results($wpdb->prepare("SELECT DISTINCT `post_id` from `$wpdb->postmeta` WHERE `meta_key` = 'calculated_carbon' AND `post_id` IN (".$placeholders.")", $all_posts));
+
             $result = array_map(function ($item){ return $item->post_id; }, $result);
 
             $posts = array_diff($all_posts, $result);
@@ -59,11 +69,11 @@ class WCCTools{
             $post_type = get_post_type_object($post_type);
 
             echo '<li>'.
-                '<a href="'.admin_url('edit.php?post_type='.$post_type->name).'" class="dashicons-before '.$post_type->menu_icon.'"> '.$post_type->label.'</a>'.
-                ' : <span>'.(round(count($result)/count($all_posts)*100)).'%</span> '.
-                (count($result)<count($all_posts)?'<a class="carbon-calculate carbon-calculator-complete" title="'.count($result).'/'.count($all_posts).'" data-type="post" data-completed="'.count($result).'" data-total="'.count($all_posts).'" data-ids="'.implode(',', $posts).'"><span>Complete</span></a>':'').
+                '<a href="'.esc_url(admin_url('edit.php?post_type='.$post_type->name)).'" class="dashicons-before '.esc_attr($post_type->menu_icon).'"> '.esc_html($post_type->label).'</a>'.
+                ' : <span>'.esc_html(round(count($result)/count($all_posts)*100)).'%</span> '.
+                (count($result)<count($all_posts)?'<a class="carbon-calculate carbon-calculator-complete" title="'.esc_attr(count($result).'/'.count($all_posts)).'" data-type="post" data-nonce="'.esc_attr($nonce).'" data-completed="'.esc_attr(count($result)).'" data-total="'.esc_attr(count($all_posts)).'" data-ids="'.esc_attr(implode(',', $posts)).'"><span>Complete</span></a>':'').
                 (count($result)<count($all_posts) && count($result)?' | ':'').
-                (count($result)?'<a class="carbon-calculate carbon-calculator-reset" data-type="post" data-id="'.$post_type->name.'"><span>Reset</span></a>':'').
+                (count($result)?'<a class="carbon-calculate carbon-calculator-reset" data-type="post" data-nonce="'.esc_attr($nonce).'" data-id="'.esc_attr($post_type->name).'"><span>Reset</span></a>':'').
                 '</li>';
         }
         echo '</ul>';

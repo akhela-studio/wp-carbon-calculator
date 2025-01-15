@@ -17,7 +17,7 @@ class WCCSettings{
      */
     public function admin_notices()
     {
-        if( in_array($_SERVER['REMOTE_ADDR'], ['127.0.0.1', '::1']) )
+        if( in_array($_SERVER['REMOTE_ADDR']??'', ['127.0.0.1', '::1']) )
             echo '<div class="notice notice-warning is-dismissible"><p>Calculator is not available on localhost</p></div>';
     }
 
@@ -28,7 +28,10 @@ class WCCSettings{
     {
         global $pagenow;
 
-        if( ($_GET['page']??'') !== 'carbon-calculator-options' && $pagenow != 'options.php' )
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $page = sanitize_text_field(wp_unslash($_GET['page']??''));
+
+        if( $page !== 'carbon-calculator-options' && $pagenow != 'options.php' )
             return;
 
         add_action( 'admin_notices', [$this, 'admin_notices'] );
@@ -59,7 +62,7 @@ class WCCSettings{
                         <label>
                             <select name="carbon_calculator[post_types][]" multiple style="min-width: 250px">
                                 <?php foreach ($post_types as $post_type):?>
-                                    <option value="<?=$post_type->name?>" <?=in_array($post_type->name, $options['post_types'])?'selected':''?>><?=$post_type->label?></option>
+                                    <option value="<?php echo esc_attr($post_type->name); ?>" <?php echo esc_attr(in_array($post_type->name, $options['post_types'])?'selected':''); ?>><?php echo esc_html($post_type->label); ?></option>
                                 <?php endforeach;?>
                             </select>
                         </label>
@@ -71,7 +74,7 @@ class WCCSettings{
                         <label>
                             <select name="carbon_calculator[taxonomies][]" multiple style="min-width: 250px">
                                 <?php foreach ($taxonomies as $taxonomy):?>
-                                    <option value="<?=$taxonomy->name?>" <?=in_array($taxonomy->name, $options['taxonomies'])?'selected':''?>><?=$taxonomy->label?></option>
+                                    <option value="<?php echo esc_attr($taxonomy->name); ?>" <?php echo esc_attr(in_array($taxonomy->name, $options['taxonomies'])?'selected':''); ?>><?php echo esc_html($taxonomy->label); ?></option>
                                 <?php endforeach;?>
                             </select>
                         </label>
@@ -80,7 +83,7 @@ class WCCSettings{
                 <tr>
                     <th scope="row">Green hosting</th>
                     <td>
-                        <input type="checkbox" name="carbon_calculator[is_green_host]" value="1" <?=$options['is_green_host']?'checked':''?>>
+                        <input type="checkbox" name="carbon_calculator[is_green_host]" value="1" <?php echo esc_attr($options['is_green_host']?'checked':''); ?>>
                         <label for="carbon_calculator[is_green_host]">My host is green</label>
                         <p><em>
                                 Please use <a href="https://www.thegreenwebfoundation.org/green-web-check/" target="_blank">thegreenwebfoundation.org</a> if you are not sure
@@ -91,7 +94,7 @@ class WCCSettings{
                 <tr>
                     <th scope="row">Google Pagespeed Key</th>
                     <td>
-                        <input type="text" name="carbon_calculator[pagespeed_api_key]" value="<?=$options['pagespeed_api_key']?>">
+                        <input type="text" name="carbon_calculator[pagespeed_api_key]" value="<?php echo esc_attr($options['pagespeed_api_key']); ?>">
                         <p><em>
                                 Please read <a href="https://developers.google.com/speed/docs/insights/v5/get-started" target="_blank">Google documentation</a> to generate an API key
                             </em>
@@ -101,7 +104,7 @@ class WCCSettings{
                 <tr>
                     <th scope="row">Emission reference</th>
                     <td>
-                        <input type="number" step="0.01" name="carbon_calculator[reference]" value="<?=$options['reference']?>"> g eq. CO²
+                        <input type="number" step="0.01" name="carbon_calculator[reference]" value="<?php echo esc_attr($options['reference']); ?>"> g eq. CO²
                         <p><em>
                                 Average website page emission
                             </em>
@@ -121,13 +124,13 @@ class WCCSettings{
     {
         ?>
         <div class="wrap">
-            <h1><?=__('Carbon calculator', 'carbon-calculator')?></h1>
+            <h1><?php echo esc_html(__('Carbon calculator', 'wp-carbon-calculator')); ?></h1>
             <form method="post" action="options.php">
                 <?php
                 // This prints out all hidden setting fields
                 settings_fields( 'carbon_calculator' );
                 do_settings_sections( 'carbon_calculator-admin' );
-                submit_button(__('Save'));
+                submit_button(__('Save', 'wp-carbon-calculator'));
                 ?>
             </form>
         </div>
