@@ -141,7 +141,7 @@ class WCCActions{
 
             add_meta_box(
                 'wpc',
-                __( 'Carbon calculator', 'wp-carbon-calculator' ),
+                __( 'Carbon calculator', 'website-carbon-calculator' ),
                 [$this, 'add_meta_box'],
                 $post_type,
                 'side',

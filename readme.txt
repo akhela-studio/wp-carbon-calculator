@@ -1,5 +1,5 @@
-=== WP Carbon Calculator ===
-Plugin Name: WP Carbon Calculator
+=== Website Carbon Calculator ===
+Plugin Name: Website Carbon Calculator
 Description: Effortlessly calculate the CO₂ impact of any page on your website directly from your WordPress admin panel.
 Contributors: akhelastudio
 Donate link: https://buymeacoffee.com/akhela
@@ -32,7 +32,7 @@ The WordPress Carbon Calculator empowers website owners to assess and minimize t
 
 == Installation ==
 
-1. Upload the plugin files to the `/wp-content/plugins/wp-carbon-calculator` directory, or install the plugin through the WordPress plugins screen directly.
+1. Upload the plugin files to the `/wp-content/plugins/website-carbon-calculator` directory, or install the plugin through the WordPress plugins screen directly.
 2. Activate the plugin through the 'Plugins' screen in WordPress.
 3. Navigate to the plugin settings to configure and start analyzing your website's carbon footprint.
 

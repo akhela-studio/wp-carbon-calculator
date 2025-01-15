@@ -124,13 +124,13 @@ class WCCSettings{
     {
         ?>
         <div class="wrap">
-            <h1><?php echo esc_html(__('Carbon calculator', 'wp-carbon-calculator')); ?></h1>
+            <h1><?php echo esc_html(__('Carbon calculator', 'website-carbon-calculator')); ?></h1>
             <form method="post" action="options.php">
                 <?php
                 // This prints out all hidden setting fields
                 settings_fields( 'carbon_calculator' );
                 do_settings_sections( 'carbon_calculator-admin' );
-                submit_button(__('Save', 'wp-carbon-calculator'));
+                submit_button(__('Save', 'website-carbon-calculator'));
                 ?>
             </form>
         </div>
@@ -144,8 +144,8 @@ class WCCSettings{
     {
         // This page will be under "Settings"
         add_options_page(
-            __('Carbon calculator settings', 'wp-carbon-calculator'),
-            __('Carbon calculator', 'wp-carbon-calculator'),
+            __('Carbon calculator settings', 'website-carbon-calculator'),
+            __('Carbon calculator', 'website-carbon-calculator'),
             'manage_options',
             'carbon-calculator-options',
             [$this, 'create_admin_page']

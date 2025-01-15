@@ -18,12 +18,12 @@
             }
 
             if( !response['co2PerPageview'] )
-                $parent.find('.carbon-calculator-progressinfo').text(wp_carbon_calculator.reference+' g eq. CO²')
+                $parent.find('.carbon-calculator-progressinfo').text(website_carbon_calculator.reference+' g eq. CO²')
             else
-                $parent.find('.carbon-calculator-progressinfo').text((Math.round(response['co2PerPageview']*100)/100)+' / '+wp_carbon_calculator.reference+' g eq. CO²')
+                $parent.find('.carbon-calculator-progressinfo').text((Math.round(response['co2PerPageview']*100)/100)+' / '+website_carbon_calculator.reference+' g eq. CO²')
 
             $parent.find('.carbon-calculator-display').text((Math.round(response['co2PerPageview']*100)/100)+'g eq. CO²')
-            $parent.find('.carbon-calculator-progress').width((response['co2PerPageview']/wp_carbon_calculator.reference*100)+'%')
+            $parent.find('.carbon-calculator-progress').width((response['co2PerPageview']/website_carbon_calculator.reference*100)+'%')
 
             $parent.removeClass('carbon-calculator--grey')
                 .removeClass('carbon-calculator--orange')
@@ -45,7 +45,7 @@
 
             $button.addClass('is-busy').attr('disabled', true);
 
-            $.post(wp_carbon_calculator.ajax_url, data, function(response) {
+            $.post(website_carbon_calculator.ajax_url, data, function(response) {
 
                 $button.removeClass('is-busy').attr('disabled', false);
 
@@ -106,7 +106,7 @@
                     return;
                 }
 
-                $.post(wp_carbon_calculator.ajax_url, data, function(response) {
+                $.post(website_carbon_calculator.ajax_url, data, function(response) {
 
                     current_index++
                     completed++;
@@ -135,7 +135,7 @@
                 id: $button.data('id')
             };
 
-            $.post(wp_carbon_calculator.ajax_url, data, function(response) {
+            $.post(website_carbon_calculator.ajax_url, data, function(response) {
 
                 document.location.reload()
             });

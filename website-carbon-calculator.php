@@ -1,11 +1,11 @@
 <?php
 /**
- * Plugin Name: WP Carbon Calculator
+ * Plugin Name: Website Carbon Calculator
  * Description: Effortlessly calculate the CO₂ impact of any page on your website directly from your WordPress admin panel.
  * Version: 1.2.0
  * Author: Akhela
  * License: GPLv3 or later
- * Text Domain : wp-carbon-calculator
+ * Text Domain : website-carbon-calculator
  * Author URI: https://www.akhela.fr
  * Plugin URI: https://github.com/akhela-studio/wp-carbon-calculator
  */
@@ -45,22 +45,22 @@ class WCC{
     public function admin_head()
     {
         wp_enqueue_script(
-            'wp-carbon-calculator',
+            'website-carbon-calculator',
             $this->plugin_dir_url . 'public/script.js', array( 'jquery' ),
             WCC_VERSION,
             true
         );
 
         wp_enqueue_style(
-            'wp-carbon-calculator',
+            'website-carbon-calculator',
             $this->plugin_dir_url . 'public/style.css', [],
             WCC_VERSION,
             false
         );
 
         wp_localize_script(
-            'wp-carbon-calculator',
-            'wp_carbon_calculator',
+            'website-carbon-calculator',
+            'website_carbon_calculator',
             [ "ajax_url" => admin_url( 'admin-ajax.php' ), 'reference'=>$this->options['reference']??0 ]
         );
     }
