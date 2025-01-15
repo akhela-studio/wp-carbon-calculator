@@ -1,6 +1,6 @@
 === Website Carbon Calculator ===
 Plugin Name: Website Carbon Calculator
-Description: Effortlessly calculate the CO₂ impact of any page on your website directly from your WordPress admin panel.
+Description: Calculate the CO₂ impact of your web pages in real time, without API delays, directly from your WordPress admin panel.
 Contributors: akhelastudio
 Donate link: https://buymeacoffee.com/akhela
 Author: Akhela
@@ -14,6 +14,7 @@ License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
 Effortlessly calculate the CO₂ impact of any page on your website directly from your WordPress admin panel.
+Unlike other solutions, this plugin does not rely on the Website Carbon API, allowing real-time calculations without delays, instantly reflecting changes made in the back office.
 
 == Description ==
 

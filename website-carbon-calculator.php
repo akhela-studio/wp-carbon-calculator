@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Website Carbon Calculator
- * Description: Effortlessly calculate the CO₂ impact of any page on your website directly from your WordPress admin panel.
+ * Description: Calculate the CO₂ impact of your web pages in real time, without API delays, directly from your WordPress admin panel.
  * Version: 1.2.0
  * Author: Akhela
  * License: GPLv3 or later
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) )
 define('WCC_VERSION', '1.2.0');
 
 if( !defined('WCC_DEBUG') )
-    define('WCC_DEBUG', true);
+    define('WCC_DEBUG', false);
 
 class WCC{
 

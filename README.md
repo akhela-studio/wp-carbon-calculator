@@ -3,6 +3,7 @@
 The WordPress Carbon Calculator, drawing inspiration from the acclaimed Website Carbon Calculator algorithm 2.0 and leveraging The Green Web Foundation's co2.js, is a powerful plugin tailored to empower website owners in their quest to assess and minimize their carbon footprint. 
 
 This user-friendly tool allows you to effortlessly calculate the CO2 impact of any page on your website directly from your WordPress admin panel.
+Unlike other solutions, this plugin does not rely on the Website Carbon API, allowing real-time calculations without delays, instantly reflecting changes made in the back office.
 
 Whether you're a sustainability-conscious blogger, a corporate website manager, or anyone committed to environmental responsibility, the WordPress Carbon Calculator is your essential solution for environmental impact assessment.
 
@@ -30,7 +31,7 @@ $ composer require akhela/wp-carbon-calculator
 
 #### Getting Started
 
-1. Activate the WordPress Carbon Calculator plugin.
+1. Activate the `Website Carbon Calculator` plugin.
 2. Navigate to "Settings" and select "Carbon Calculator."
 3. Enter the necessary information to configure the plugin.
 
@@ -56,7 +57,7 @@ $ composer require akhela/wp-carbon-calculator
 
 ### How to display it in your templates ?
 
-Integrating the WordPress Carbon Calculator into your website's front-end templates is a breeze and allows you to display the calculated carbon emissions directly to your site visitors. 
+Integrating the Carbon Calculator into your website's front-end templates is a breeze and allows you to display the calculated carbon emissions directly to your site visitors. 
 
 In your front-end template files (such as your theme's template files or custom templates), you can access the carbon calculation method by using ```get_calculated_carbon()```. This method is available on any page of your site.
 

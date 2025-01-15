@@ -4,7 +4,7 @@
   "version": "1.2.0",
   "homepage": "https://www.akhela.fr",
   "license": "GPL-3.0-or-later",
-  "description": "Effortlessly calculate the CO₂ impact of any page on your website directly from your WordPress admin panel.",
+  "description": "Calculate the CO₂ impact of your web pages in real time, without API delays, directly from your WordPress admin panel.",
   "keywords": ["plugin","wordpress","carbon footprint", "sustainability", "environment", "CO2", "website impact"],
   "extra": {
     "branch-alias": {
