@@ -2,7 +2,7 @@
 
 use Akhela\WebsiteCarbonCalculator\WebsiteCarbonCalculator;
 
-class WCCActions{
+class WPCC_Actions{
 
     private $options;
 
@@ -12,10 +12,10 @@ class WCCActions{
         add_action( '_wp_put_post_revision', [$this, 'post_revision_updated'] );
         add_filter( 'posts_results', [$this, 'preview_access'], 10, 2 );
 
-        if( !is_admin() || (in_array($_SERVER['REMOTE_ADDR']??'127.0.0.1', ['127.0.0.1', '::1']) && !WCC_DEBUG) )
+        if( !is_admin() || (in_array($_SERVER['REMOTE_ADDR']??'127.0.0.1', ['127.0.0.1', '::1']) && !WPCC_DEBUG) )
             return;
 
-        $this->options = get_option('carbon_calculator');
+        $this->options = get_option('wpcc_settings');
 
         add_action( 'add_meta_boxes', [$this, 'add_meta_boxes'] );
 
@@ -62,12 +62,12 @@ class WCCActions{
 
         $post = wp_get_post_revision($revision_id);
 
-        if( get_post_meta($post->post_parent, 'calculated_carbon', true) ){
+        if( get_post_meta($post->post_parent, 'wpcc', true) ){
 
-            delete_post_meta($post->post_parent, 'calculated_carbon_details');
-            delete_post_meta($post->post_parent, 'calculated_carbon');
+            delete_post_meta($post->post_parent, 'wpcc_details');
+            delete_post_meta($post->post_parent, 'wpcc');
 
-            update_post_meta($post->post_parent, 'calculated_carbon_pending', true);
+            update_post_meta($post->post_parent, 'wpcc_pending', true);
 
         }
     }
@@ -77,7 +77,7 @@ class WCCActions{
      */
     public function manage_posts_columns($columns) {
 
-        $columns['wcc'] = '<span class="wcc-icon dashicons-before dashicons-admin-site" title="Estimated carbon emissions"/>';
+        $columns['wpcc'] = '<span class="wpcc-icon dashicons-before dashicons-admin-site" title="Estimated carbon emissions"/>';
 
         return $columns;
     }
@@ -87,14 +87,14 @@ class WCCActions{
      */
     public function manage_posts_custom_column($column_name, $item_id) {
 
-        if( $column_name == 'wcc'){
+        if( $column_name == 'wpcc'){
 
-            $computation = get_post_meta($item_id,'calculated_carbon_details', true);
+            $computation = get_post_meta($item_id,'wpcc_details', true);
 
             if( $computation )
-                echo '<a class="wcc-badge wcc-badge--'.esc_attr($computation['colorCode']).'" title="'.esc_attr(round(($computation['co2PerPageview']??0),2)).' g eq. CO²"/>';
+                echo '<a class="wpcc-badge wpcc-badge--'.esc_attr($computation['colorCode']).'" title="'.esc_attr(round(($computation['co2PerPageview']??0),2)).' g eq. CO²"/>';
             else
-                echo '<a class="wcc-badge wcc-badge--grey"/>';
+                echo '<a class="wpcc-badge wpcc-badge--grey"/>';
         }
     }
 
@@ -103,14 +103,14 @@ class WCCActions{
      */
     public function manage_terms_custom_column($string, $column_name, $item_id) {
 
-        if( $column_name == 'wcc'){
+        if( $column_name == 'wpcc'){
 
-            $computation = get_term_meta($item_id,'calculated_carbon_details', true);
+            $computation = get_term_meta($item_id,'wpcc_details', true);
 
             if( $computation )
-                echo '<a class="wcc-badge wcc-badge--'.esc_attr($computation['colorCode']).'" title="'.esc_attr(round(($computation['co2PerPageview']??0),2)).' g eq. CO²"/>';
+                echo '<a class="wpcc-badge wpcc-badge--'.esc_attr($computation['colorCode']).'" title="'.esc_attr(round(($computation['co2PerPageview']??0),2)).' g eq. CO²"/>';
             else
-                echo '<a class="wcc-badge wcc-badge--grey"/>';
+                echo '<a class="wpcc-badge wpcc-badge--grey"/>';
         }
     }
 
@@ -140,7 +140,7 @@ class WCCActions{
         foreach ($this->options['post_types']??[] as $post_type){
 
             add_meta_box(
-                'wpc',
+                'wpcc_calculator',
                 __( 'Carbon calculator', 'website-carbon-calculator' ),
                 [$this, 'add_meta_box'],
                 $post_type,
@@ -234,7 +234,7 @@ class WCCActions{
         $base_url = is_multisite() ? network_home_url() : get_home_url();
         $url = rtrim($base_url, '/').wp_make_link_relative($url);
 
-        if( in_array($_SERVER['REMOTE_ADDR']??'127.0.0.1', ['127.0.0.1', '::1']) && WCC_DEBUG )
+        if( in_array($_SERVER['REMOTE_ADDR']??'127.0.0.1', ['127.0.0.1', '::1']) && WPCC_DEBUG )
             $url = 'https://www.websitecarbon.com';
 
         //ensure generated cached version
@@ -270,8 +270,8 @@ class WCCActions{
             $computation['energy'] = round($computation['energy']*1000, 2).'Wh';
             $computation['colorCode'] = $this->getColorCode($co2, $reference);
 
-            $this->save_meta($type, $id, 'calculated_carbon_details', $computation);
-            $this->save_meta($type, $id, 'calculated_carbon', $co2);
+            $this->save_meta($type, $id, 'wpcc_details', $computation);
+            $this->save_meta($type, $id, 'wpcc', $co2);
 
             $this->delete_meta($type, $id, 'calculating_carbon');
 
@@ -305,14 +305,12 @@ class WCCActions{
         if( $type == 'post' ){
 
             $all_posts = get_posts(['post_type'=>$id,'posts_per_page'=>-1, 'fields'=>'ids']);
-            $placeholders = implode( ', ', array_fill( 0, count( $all_posts ), '%d' ) );
-            $args = array_merge($all_posts, ['calculated_carbon%']);
+            $args = array_merge($all_posts, ['wpcc%']);
 
             // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
             $result = $wpdb->query(
                     $wpdb->remove_placeholder_escape(
-                    // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-                            $wpdb->prepare("DELETE FROM $wpdb->postmeta WHERE `post_id` IN (".$placeholders.") AND `meta_key` LIKE %s", $args)
+                            $wpdb->prepare("DELETE FROM $wpdb->postmeta WHERE `post_id` IN (".implode( ', ', array_fill( 0, count( $all_posts ), '%d' ) ).") AND `meta_key` LIKE %s", $args)
                     )
             );
 
@@ -321,14 +319,12 @@ class WCCActions{
         elseif( $type == 'term' ){
 
             $all_terms = get_terms(['taxonomy'=>$id, 'fields'=>'ids']);
-            $placeholders = implode( ', ', array_fill( 0, count( $all_terms ), '%d' ) );
-            $args = array_merge($all_terms, ['calculated_carbon%']);
+            $args = array_merge($all_terms, ['wpcc%']);
 
             // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
             $result = $wpdb->query(
                     $wpdb->remove_placeholder_escape(
-                    // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-                            $wpdb->prepare("DELETE FROM $wpdb->termmeta WHERE `term_id` IN (".$placeholders.") AND `meta_key` LIKE %s", $args)
+                            $wpdb->prepare("DELETE FROM $wpdb->termmeta WHERE `term_id` IN (".implode( ', ', array_fill( 0, count( $all_terms ), '%d' ) ).") AND `meta_key` LIKE %s", $args)
                     )
             );
 
@@ -358,11 +354,11 @@ class WCCActions{
 
             wp_send_json(['in_progress'=>true], 500);
         }
-        elseif( $computation = $this->get_meta($type, $id, 'calculated_carbon_details') ){
+        elseif( $computation = $this->get_meta($type, $id, 'wpcc_details') ){
 
             wp_send_json($computation);
         }
-        elseif( $this->get_meta($type, $id, 'calculated_carbon_pending') ){
+        elseif( $this->get_meta($type, $id, 'wpcc_pending') ){
 
             $this->carbon_calculate();
         }
@@ -382,9 +378,9 @@ class WCCActions{
     public function save_meta($type, $id, $key, $value){
 
         if( $type == 'search' || $type == '404' )
-            update_option($type.'::'.$key, $value);
+            update_option($key.'::'.$type, $value);
         if( $type == 'archive' )
-            update_option($id.'::'.$key, $value);
+            update_option($key.'::'.$type, $value);
         elseif( $type == 'post' )
             update_post_meta($id, $key, $value);
         elseif( $type == 'term' )
@@ -400,9 +396,9 @@ class WCCActions{
     public function delete_meta($type, $id, $key){
 
         if( $type == 'search' || $type == '404' )
-            delete_option($type.'::'.$key);
+            delete_option($key.'::'.$type);
         if( $type == 'archive' )
-            delete_option($id.'::'.$key);
+            delete_option($key.'::'.$type);
         elseif( $type == 'post' )
             delete_post_meta($id, $key);
         elseif( $type == 'term' )
@@ -418,9 +414,9 @@ class WCCActions{
     public function get_meta($type, $id, $key){
 
         if( $type == 'search' || $type == '404' )
-            return get_option($type.'::'.$key, false);
+            return get_option($key.'::'.$type, false);
         if( $type == 'archive' )
-            return get_option($id.'::'.$key, false);
+            return get_option($key.'::'.$type, false);
         elseif( $type == 'post' )
             return get_post_meta($id, $key, true);
         elseif( $type == 'term' )
@@ -437,8 +433,8 @@ class WCCActions{
 
         $post = get_post();
 
-        $computation = get_post_meta($post->ID,'calculated_carbon_details', true);
-        $this->display_calculator_form($computation, 'post', $post->ID);
+        $computation = get_post_meta($post->ID,'wpcc_details', true);
+        self::display_calculator_form($computation, 'post', $post->ID);
     }
 
 
@@ -448,9 +444,9 @@ class WCCActions{
      */
     public function term_edit_form_tag($tag, $taxonomy){
 
-        $computation = get_term_meta($tag->term_id,'calculated_carbon_details', true);
+        $computation = get_term_meta($tag->term_id,'wpcc_details', true);
 
-        $this->display_calculator_form($computation, 'term', $tag->term_id);
+        self::display_calculator_form($computation, 'term', $tag->term_id);
     }
 
     /**
@@ -481,9 +477,14 @@ class WCCActions{
      */
     public static function display_calculator_form($computation, $type, $id){
 
-        $options = get_option('carbon_calculator');
+        $options = get_option('wpcc_settings');
         $reference = floatval($options['reference']??0.55);
-        $is_block_editor = get_current_screen()->is_block_editor();
+        $current_screen = get_current_screen();
+
+        if( !$current_screen )
+            return;
+
+        $is_block_editor = $current_screen->is_block_editor();
         ?>
         <div class="carbon-calculator carbon-calculator--<?php echo esc_attr($computation['colorCode']??'grey'); ?>">
 
@@ -532,5 +533,3 @@ class WCCActions{
         <?php
     }
 }
-
-new WCCActions();

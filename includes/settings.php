@@ -1,12 +1,12 @@
 <?php
 
-class WCCSettings{
+class WPCC_Settings{
 
     private $options;
 
     public function __construct() {
 
-        $this->options = get_option('carbon_calculator');
+        $this->options = get_option('wpcc_settings');
 
         add_action( 'admin_menu', [$this, 'admin_menu'] );
         add_action( 'admin_init', [$this, 'admin_init'] );
@@ -26,28 +26,25 @@ class WCCSettings{
      */
     public function admin_init()
     {
-        global $pagenow;
+        global $plugin_page, $pagenow;
 
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-        $page = sanitize_text_field(wp_unslash($_GET['page']??''));
-
-        if( $page !== 'carbon-calculator-options' && $pagenow != 'options.php' )
+        if( $plugin_page !== 'carbon-calculator-options' && $pagenow != 'options.php' )
             return;
 
         add_action( 'admin_notices', [$this, 'admin_notices'] );
 
         register_setting(
-            'carbon_calculator', // Option group
-            'carbon_calculator', // Option name
+            'wpcc_settings', // Option group
+            'wpcc_settings', // Option name
             [$this, 'sanitize'] // Sanitize
         );
 
-        $options = get_option('carbon_calculator');
+        $options = get_option('wpcc_settings');
         $options = is_array($options)?$options:[];
 
         $options = array_merge(['is_green_host'=>false, 'post_types'=>[], 'taxonomies'=>[], 'pagespeed_api_key'=>'', 'reference'=>0.55], $options);
 
-        add_settings_section( 'carbon_calculator', 'Settings', function() use($options){
+        add_settings_section( 'wpcc_settings_section', 'Settings', function() use($options){
 
             $post_types = get_post_types( ['public'=>true], 'objects');
             unset($post_types['attachment']);
@@ -60,7 +57,7 @@ class WCCSettings{
                     <th scope="row">Enabled post types</th>
                     <td>
                         <label>
-                            <select name="carbon_calculator[post_types][]" multiple style="min-width: 250px">
+                            <select name="wpcc_settings[post_types][]" multiple style="min-width: 250px">
                                 <?php foreach ($post_types as $post_type):?>
                                     <option value="<?php echo esc_attr($post_type->name); ?>" <?php echo esc_attr(in_array($post_type->name, $options['post_types'])?'selected':''); ?>><?php echo esc_html($post_type->label); ?></option>
                                 <?php endforeach;?>
@@ -72,7 +69,7 @@ class WCCSettings{
                     <th scope="row">Enabled taxonomies</th>
                     <td>
                         <label>
-                            <select name="carbon_calculator[taxonomies][]" multiple style="min-width: 250px">
+                            <select name="wpcc_settings[taxonomies][]" multiple style="min-width: 250px">
                                 <?php foreach ($taxonomies as $taxonomy):?>
                                     <option value="<?php echo esc_attr($taxonomy->name); ?>" <?php echo esc_attr(in_array($taxonomy->name, $options['taxonomies'])?'selected':''); ?>><?php echo esc_html($taxonomy->label); ?></option>
                                 <?php endforeach;?>
@@ -83,8 +80,8 @@ class WCCSettings{
                 <tr>
                     <th scope="row">Green hosting</th>
                     <td>
-                        <input type="checkbox" name="carbon_calculator[is_green_host]" value="1" <?php echo esc_attr($options['is_green_host']?'checked':''); ?>>
-                        <label for="carbon_calculator[is_green_host]">My host is green</label>
+                        <input type="checkbox" name="wpcc_settings[is_green_host]" value="1" <?php echo esc_attr($options['is_green_host']?'checked':''); ?>>
+                        <label for="wpcc_settings[is_green_host]">My host is green</label>
                         <p><em>
                                 Please use <a href="https://www.thegreenwebfoundation.org/green-web-check/" target="_blank">thegreenwebfoundation.org</a> if you are not sure
                             </em>
@@ -94,7 +91,7 @@ class WCCSettings{
                 <tr>
                     <th scope="row">Google Pagespeed Key</th>
                     <td>
-                        <input type="text" name="carbon_calculator[pagespeed_api_key]" value="<?php echo esc_attr($options['pagespeed_api_key']); ?>">
+                        <input type="text" name="wpcc_settings[pagespeed_api_key]" value="<?php echo esc_attr($options['pagespeed_api_key']); ?>">
                         <p><em>
                                 Please read <a href="https://developers.google.com/speed/docs/insights/v5/get-started" target="_blank">Google documentation</a> to generate an API key
                             </em>
@@ -104,7 +101,7 @@ class WCCSettings{
                 <tr>
                     <th scope="row">Emission reference</th>
                     <td>
-                        <input type="number" step="0.01" name="carbon_calculator[reference]" value="<?php echo esc_attr($options['reference']); ?>"> g eq. CO²
+                        <input type="number" step="0.01" name="wpcc_settings[reference]" value="<?php echo esc_attr($options['reference']); ?>"> g eq. CO²
                         <p><em>
                                 Average website page emission
                             </em>
@@ -114,7 +111,7 @@ class WCCSettings{
                 </tbody>
             </table>
             <?php
-        },'carbon_calculator-admin');
+        },'wpcc_settings-admin');
     }
 
     /**
@@ -128,8 +125,8 @@ class WCCSettings{
             <form method="post" action="options.php">
                 <?php
                 // This prints out all hidden setting fields
-                settings_fields( 'carbon_calculator' );
-                do_settings_sections( 'carbon_calculator-admin' );
+                settings_fields( 'wpcc_settings' );
+                do_settings_sections( 'wpcc_settings-admin' );
                 submit_button(__('Save', 'website-carbon-calculator'));
                 ?>
             </form>
@@ -171,5 +168,3 @@ class WCCSettings{
         return $new_input;
     }
 }
-
-new WCCSettings();

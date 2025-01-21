@@ -71,11 +71,11 @@
     background: none; box-shadow: none; padding: 0;
 }
 
-.wcc-badge{ width: 14px; height: 14px; background: #eee; display: inline-block; border-radius: 50%; outline: 1px solid #eee; border: 1px solid #ffffff }
-.wcc-badge--red{ background: #d75b5c; outline-color: #d75b5c }
-.wcc-badge--orange{ background: #f19c65; outline-color: #f19c65 }
-.wcc-badge--green{ background: #5fc17d; outline-color: #5fc17d }
-.wcc-badge--grey{ background: #eee; outline-color: #eee }
+.wpcc-badge{ width: 14px; height: 14px; background: #eee; display: inline-block; border-radius: 50%; outline: 1px solid #eee; border: 1px solid #ffffff }
+.wpcc-badge--red{ background: #d75b5c; outline-color: #d75b5c }
+.wpcc-badge--orange{ background: #f19c65; outline-color: #f19c65 }
+.wpcc-badge--green{ background: #5fc17d; outline-color: #5fc17d }
+.wpcc-badge--grey{ background: #eee; outline-color: #eee }
 
-th#wcc, td.wcc.column-wcc{ width: 1%; white-space: nowrap; text-align: center }
-.wcc-icon{ color: #666; margin-left: 2px }
+th#wpcc, td.wpcc.column-wpcc{ width: 1%; white-space: nowrap; text-align: center }
+.wpcc-icon{ color: #666; margin-left: 2px }

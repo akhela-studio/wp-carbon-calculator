@@ -1,15 +1,15 @@
 <?php
 
-class WCCTools{
+class WPCC_Tools{
 
     private $options;
 
     public function __construct() {
 
-        if( (in_array($_SERVER['REMOTE_ADDR']??'127.0.0.1', ['127.0.0.1', '::1']) && !WCC_DEBUG) )
+        if( (in_array($_SERVER['REMOTE_ADDR']??'127.0.0.1', ['127.0.0.1', '::1']) && !WPCC_DEBUG) )
             return;
 
-        $this->options = get_option('carbon_calculator');
+        $this->options = get_option('wpcc_settings');
 
         add_action( 'admin_menu', [$this, 'admin_menu'] );
     }
@@ -25,10 +25,9 @@ class WCCTools{
         foreach ($this->options['taxonomies']??[] as $taxonomy){
 
             $all_terms = get_terms(['taxonomy'=>$taxonomy, 'fields'=>'ids']);
-            $placeholders = implode( ', ', array_fill( 0, count( $all_terms ), '%d' ) );
 
-            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery.DirectQuery
-            $result = $wpdb->get_results($wpdb->prepare("SELECT DISTINCT `term_id` from `$wpdb->termmeta` WHERE `meta_key` = 'calculated_carbon' AND `term_id` IN (".$placeholders.")", $all_terms));
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
+            $result = $wpdb->get_results($wpdb->prepare("SELECT DISTINCT `term_id` from `$wpdb->termmeta` WHERE `meta_key` = 'wpcc' AND `term_id` IN (".implode( ', ', array_fill( 0, count( $all_terms ), '%d' ) ).")", $all_terms));
 
             $result = array_map(function ($item){ return $item->term_id; }, $result);
 
@@ -57,10 +56,8 @@ class WCCTools{
             if( !count($all_posts) )
                 continue;
 
-            $placeholders = implode( ', ', array_fill( 0, count( $all_posts ), '%d' ) );
-
-            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery.DirectQuery
-            $result = $wpdb->get_results($wpdb->prepare("SELECT DISTINCT `post_id` from `$wpdb->postmeta` WHERE `meta_key` = 'calculated_carbon' AND `post_id` IN (".$placeholders.")", $all_posts));
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
+            $result = $wpdb->get_results($wpdb->prepare("SELECT DISTINCT `post_id` from `$wpdb->postmeta` WHERE `meta_key` = 'wpcc' AND `post_id` IN (".implode( ', ', array_fill( 0, count( $all_posts ), '%d' ) ).")", $all_posts));
 
             $result = array_map(function ($item){ return $item->post_id; }, $result);
 
@@ -111,8 +108,8 @@ class WCCTools{
                             if( !$post_type->has_archive )
                                 continue;
 
-                            $computation = get_option($post_type->name . '::calculated_carbon_details');
-                            WCCActions::display_calculator_form($computation, 'archive', $post_type->name);
+                            $computation = get_option('wpcc_details::'.$post_type->name);
+                            WPCC_Actions::display_calculator_form($computation, 'archive', $post_type->name);
                         }
                         ?>
                     </td>
@@ -123,11 +120,11 @@ class WCCTools{
                     </th>
                     <td class="carbon-calculators">
                         <?php
-                        $computation = get_option('search::calculated_carbon_details');
-                        WCCActions::display_calculator_form($computation, 'search', '');
+                        $computation = get_option('wpcc_details::search');
+                        WPCC_Actions::display_calculator_form($computation, 'search', '');
 
-                        $computation = get_option('404::calculated_carbon_details');
-                        WCCActions::display_calculator_form($computation, '404', '');
+                        $computation = get_option('wpcc_details::404');
+                        WPCC_Actions::display_calculator_form($computation, '404', '');
                         ?>
                     </td>
                 </tr>
@@ -137,5 +134,3 @@ class WCCTools{
         });
     }
 }
-
-new WCCTools();
