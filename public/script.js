@@ -148,7 +148,7 @@
 
             wp.data.subscribe(() => {
 
-                if( !wp.data.select('core/editor') )
+                if( !wp.data.select('core/editor') || !$('#wpcc_calculator').length )
                     return;
 
                 var currentPostRevisionId = wp.data.select('core/editor').getCurrentPostLastRevisionId()
