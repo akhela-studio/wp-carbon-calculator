@@ -39,21 +39,25 @@ $ composer require akhela/wp-carbon-calculator
 
 ### Interface
 
-**Summary**
+**Minimal Impact – This page has mostly text, resulting in a low CO₂ footprint.**
 
-![Summary](/public/screenshots/summary.png)
+![Summary](/.wordpress-org/screenshot-1.png)
 
-**Calculator**
+**Higher Impact – Adding a YouTube video increases the page’s CO₂ emissions.**
 
-![Calculator](/public/screenshots/calculator.png)
+![Calculator](/.wordpress-org/screenshot-2.png)
 
-**Tools**
+**Instant Insights – See a page’s CO₂ impact with green, orange, or red flags.**
 
-![Tools](/public/screenshots/tools.png)
+![Tools](/.wordpress-org/screenshot-3.png)
 
-**Settings**
+**Advanced Tools – Compute emissions for special pages with dedicated tools.**
 
-![Settings](/public/screenshots/settings.png)
+![Settings](/.wordpress-org/screenshot-4.png)
+
+**Customizable Settings – Fine-tune calculations for accurate CO₂ impact analysis.**
+
+![Settings](/.wordpress-org/screenshot-5.png)
 
 ### How to display it in your templates ?
 

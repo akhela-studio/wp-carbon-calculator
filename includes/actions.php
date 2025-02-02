@@ -433,7 +433,7 @@ class WPCC_Actions{
 
         $post = get_post();
 
-        $computation = get_post_meta($post->ID,'wpcc_details', true);
+        $computation = get_post_meta($post->ID, 'wpcc_details', true);
         self::display_calculator_form($computation, 'post', $post->ID);
     }
 
@@ -444,7 +444,7 @@ class WPCC_Actions{
      */
     public function term_edit_form_tag($tag, $taxonomy){
 
-        $computation = get_term_meta($tag->term_id,'wpcc_details', true);
+        $computation = get_term_meta($tag->term_id, 'wpcc_details', true);
 
         self::display_calculator_form($computation, 'term', $tag->term_id);
     }
@@ -508,15 +508,10 @@ class WPCC_Actions{
                     <?php echo esc_html($reference); ?> g eq. CO²
                 </div>
             </div>
-            <span class="carbon-calculator-title">Impact :</span>
-            <span class="carbon-calculator-display" title="per page view">
-                <?php if($computation):?>
-                    <?php echo esc_html(round($computation['co2PerPageview'],2)); ?>g eq. CO²
-                <?php endif; ?>
-            </span>
+            <span class="carbon-calculator-display" title="View computation details">Details</span>
             <button class="carbon-calculate carbon-calculate-estimate <?php echo esc_attr($is_block_editor?'components-button is-primary':'button button-primary'); ?>" data-type="<?php echo esc_attr($type); ?>" data-nonce="<?php echo esc_attr(wp_create_nonce('carbon-calculator'));?>" data-id="<?php echo esc_attr($id); ?>" role="button" title="Estimated computation time : 15s">
                 <span>Estimate</span>
-                <span>Estimating…</span>
+                <span>Loading…</span>
             </button>
             <div class="carbon-calculator-details">
                 <span>

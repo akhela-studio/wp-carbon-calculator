@@ -22,7 +22,6 @@
             else
                 $parent.find('.carbon-calculator-progressinfo').text((Math.round(response['co2PerPageview']*100)/100)+' / '+website_carbon_calculator.reference+' g eq. CO²')
 
-            $parent.find('.carbon-calculator-display').text((Math.round(response['co2PerPageview']*100)/100)+'g eq. CO²')
             $parent.find('.carbon-calculator-progress').width((response['co2PerPageview']/website_carbon_calculator.reference*100)+'%')
 
             $parent.removeClass('carbon-calculator--grey')

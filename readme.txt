@@ -1,4 +1,5 @@
 === Website Carbon Calculator ===
+
 Plugin Name: Website Carbon Calculator
 Description: Calculate the CO₂ impact of your web pages in real time, without API delays, directly from your WordPress admin panel.
 Contributors: akhelastudio
@@ -8,13 +9,12 @@ Author URI: https://www.akhela.fr
 Tags: carbon, emissions, measure, sustainability, performance
 Requires at least: 5.8
 Tested up to: 6.7
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 Requires PHP: 7.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-Effortlessly calculate the CO₂ impact of any page on your website directly from your WordPress admin panel.
-Unlike other solutions, this plugin does not rely on the Website Carbon API, allowing real-time calculations without delays, instantly reflecting changes made in the back office.
+Effortlessly calculate any page’s CO₂ impact in WordPress, with real-time results and no reliance on the Website Carbon API, ensuring instant updates.
 
 == Description ==
 
@@ -23,6 +23,8 @@ The internet consumes a lot of electricity. 1021 TWh per year to be precise. To 
 From data centres to transmission networks to the billions of connected devices that we hold in our hands, it is all consuming electricity, and in turn producing carbon emissions equal to or greater than the global aviation industry. Yikes!
 
 The WordPress Carbon Calculator empowers website owners to assess and minimize their carbon footprint. Drawing inspiration from the acclaimed Website Carbon Calculator algorithm 2.0 and leveraging The Green Web Foundation's co2.js, this user-friendly tool allows you to calculate the CO₂ impact of any page on your website directly from your WordPress admin panel.
+
+You can choose to activate it on selected post types and taxonomies, with full support for custom post types and custom taxonomies.
 
 **Key Features:**
 
@@ -47,25 +49,36 @@ The plugin uses the Website Carbon Calculator algorithm 2.0 and The Green Web Fo
 
 Yes, the plugin allows you to showcase the computed CO₂ impact prominently on your website's front end to engage and educate your visitors.
 
+You can use the following PHP snippet on any page to display the CO₂ impact:
+
+`<?php if($calculated_carbon = get_calculated_carbon() ): ?>
+This page emits <?=round($calculated_carbon,2)?>g eq. CO₂
+<?php endif; ?>`
+
+This will output the calculated CO₂ emissions in grams.
+
 == Screenshots ==
 
-1. [Summary](/public/screenshots/summary.png)
-2. [Calculator](/public/screenshots/calculator.png)
-3. [Tools](/public/screenshots/tools.png)
-4. [Settings](/public/screenshots/settings.png)
+1. Minimal Impact – This page has mostly text, resulting in a low CO₂ footprint.
+2. Higher Impact – Adding a YouTube video increases the page’s CO₂ emissions.
+3. Instant Insights – See a page’s CO₂ impact with green, orange, or red flags.
+4. Advanced Tools – Compute emissions for special pages with dedicated tools.
+5. Customizable Settings – Fine-tune calculations for accurate CO₂ impact analysis.
 
 == Changelog ==
+
+= 1.2.2 =
+* Better readme.txt and screenshots
+
+= 1.2.1 =
+* Initial release of the WordPress Carbon Calculator plugin on Wordpress.
 
 = 1.0.0 =
 * Initial release of the WordPress Carbon Calculator plugin.
 
-== Upgrade Notice ==
-
-= 1.0.0 =
-* First stable release of the plugin.
-
 == Roadmap ==
 
 * Translations
+* Display Google page speed performance score
 * Ecoindex.fr algorithm support
-* Enhanced settings/tools interface
+* Better settings/tools interface design
