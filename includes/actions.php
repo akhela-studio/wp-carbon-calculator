@@ -12,10 +12,13 @@ class WPCC_Actions{
         add_action( '_wp_put_post_revision', [$this, 'post_revision_updated'] );
         add_filter( 'posts_results', [$this, 'preview_access'], 10, 2 );
 
-        if( !is_admin() || (in_array($_SERVER['REMOTE_ADDR']??'127.0.0.1', ['127.0.0.1', '::1']) && !WPCC_DEBUG) )
+        if( !is_admin() )
             return;
 
         $this->options = get_option('wpcc_settings');
+
+        if( empty($this->options['pagespeed_api_key']??'') || (in_array($_SERVER['REMOTE_ADDR']??'127.0.0.1', ['127.0.0.1', '::1']) && !WPCC_DEBUG) )
+            return;
 
         add_action( 'add_meta_boxes', [$this, 'add_meta_boxes'] );
 

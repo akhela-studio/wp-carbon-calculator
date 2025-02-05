@@ -6,10 +6,10 @@ class WPCC_Tools{
 
     public function __construct() {
 
-        if( (in_array($_SERVER['REMOTE_ADDR']??'127.0.0.1', ['127.0.0.1', '::1']) && !WPCC_DEBUG) )
-            return;
-
         $this->options = get_option('wpcc_settings');
+
+        if( empty($this->options['pagespeed_api_key']??'') || (in_array($_SERVER['REMOTE_ADDR']??'127.0.0.1', ['127.0.0.1', '::1']) && !WPCC_DEBUG) )
+            return;
 
         add_action( 'admin_menu', [$this, 'admin_menu'] );
     }
