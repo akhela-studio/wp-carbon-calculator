@@ -1,8 +1,8 @@
 <?php return array(
     'root' => array(
         'name' => 'akhela/wp-carbon-calculator',
-        'pretty_version' => '1.1.6',
-        'version' => '1.1.6.0',
+        'pretty_version' => '1.2.3',
+        'version' => '1.2.3.0',
         'reference' => NULL,
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
@@ -11,17 +11,17 @@
     ),
     'versions' => array(
         'akhela/website-carbon-calculator' => array(
-            'pretty_version' => '1.0.1',
-            'version' => '1.0.1.0',
-            'reference' => '5bda040f0fb9fb968738e6b6e0634f856a0f1787',
+            'pretty_version' => '1.1.0',
+            'version' => '1.1.0.0',
+            'reference' => '6d2fc706916f65ebec5ab7265e95be45410e74f9',
             'type' => 'library',
             'install_path' => __DIR__ . '/../akhela/website-carbon-calculator',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
         'akhela/wp-carbon-calculator' => array(
-            'pretty_version' => '1.1.6',
-            'version' => '1.1.6.0',
+            'pretty_version' => '1.2.3',
+            'version' => '1.2.3.0',
             'reference' => NULL,
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',

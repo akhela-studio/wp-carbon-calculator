@@ -47,17 +47,29 @@ $ composer require akhela/wp-carbon-calculator
 
 ![Calculator](/.wordpress-org/screenshot-2.png)
 
-**Instant Insights – See a page’s CO₂ impact with green, orange, or red flags.**
+**Advanced Data – View bytes transferred, boot-up time, and key performance metrics.**
 
 ![Tools](/.wordpress-org/screenshot-3.png)
 
-**Advanced Tools – Compute emissions for special pages with dedicated tools.**
+**Taxonomy Support – Analyze CO₂ impact directly on term pages.**
 
 ![Settings](/.wordpress-org/screenshot-4.png)
 
-**Customizable Settings – Fine-tune calculations for accurate CO₂ impact analysis.**
+**Instant Insights – See a page’s CO₂ impact with green, orange, or red flags.**
 
 ![Settings](/.wordpress-org/screenshot-5.png)
+
+**Dashboard Widget – View average CO₂ impact and performance scores at a glance.**
+
+![Settings](/.wordpress-org/screenshot-6.png)
+
+**Advanced Tools – Compute emissions for special pages with dedicated tools.**
+
+![Settings](/.wordpress-org/screenshot-7.png)
+
+**Customizable Settings – Fine-tune calculations for accurate CO₂ impact analysis.**
+
+![Settings](/.wordpress-org/screenshot-8.png)
 
 ### How to display it in your templates ?
 

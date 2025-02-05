@@ -21,15 +21,15 @@ class WPCC_Actions{
 
         foreach ($this->options['taxonomies']??[] as $taxonomy){
 
-            add_action($taxonomy.'_term_edit_form_top', [$this, 'term_edit_form_tag'], 10, 2);
+            add_action($taxonomy.'_edit_form', [$this, 'term_edit_form_tag'], 10, 2);
 
-            add_filter( "manage_edit-{$taxonomy}_columns", [ $this, 'manage_posts_columns' ] );
+            add_filter( "manage_edit-{$taxonomy}_columns", [ $this, 'manage_columns' ] );
             add_filter( "manage_{$taxonomy}_custom_column", [ $this, 'manage_terms_custom_column' ], 10, 3 );
         }
 
         foreach ($this->options['post_types']??[] as $post_type){
 
-            add_filter( "manage_{$post_type}_posts_columns", [ $this, 'manage_posts_columns' ] );
+            add_filter( "manage_{$post_type}_posts_columns", [ $this, 'manage_columns' ] );
             add_action( "manage_{$post_type}_posts_custom_column", [ $this, 'manage_posts_custom_column' ], 10, 2 );
         }
 
@@ -75,9 +75,23 @@ class WPCC_Actions{
     /**
      * @return array
      */
-    public function manage_posts_columns($columns) {
+    public function manage_columns($columns) {
 
-        $columns['wpcc'] = '<span class="wpcc-icon dashicons-before dashicons-admin-site" title="Estimated carbon emissions"/>';
+        $columns_option = $this->options['columns']??[];
+
+        if( in_array('performance', $columns_option ) ){
+
+            $strategies = $this->options['strategy']??['desktop'];
+
+            if( empty($strategies) )
+                $strategies = ['desktop'];
+
+            foreach ($strategies as $strategy)
+                $columns['wpcc_performance_'.$strategy] = '<span class="wpcc-icon dashicons-before dashicons-'.esc_attr($strategy=='desktop'?'desktop':'smartphone').'" title="Performance score"></span><b>'.ucfirst($strategy).' Performance score</b>';
+        }
+
+        if( in_array('computed_carbon', $columns_option ) || !isset($this->options['columns']) )
+            $columns['wpcc_computed'] = '<span class="wpcc-icon dashicons-before dashicons-admin-site" title="Estimated carbon emissions"></span><b>Estimated carbon emissions</b>';
 
         return $columns;
     }
@@ -87,14 +101,11 @@ class WPCC_Actions{
      */
     public function manage_posts_custom_column($column_name, $item_id) {
 
-        if( $column_name == 'wpcc'){
+        if( str_starts_with($column_name, 'wpcc_' ) ){
 
             $computation = get_post_meta($item_id,'wpcc_details', true);
 
-            if( $computation )
-                echo '<a class="wpcc-badge wpcc-badge--'.esc_attr($computation['colorCode']).'" title="'.esc_attr(round(($computation['co2PerPageview']??0),2)).' g eq. CO²"/>';
-            else
-                echo '<a class="wpcc-badge wpcc-badge--grey"/>';
+            $this->displayIndicators($column_name, $computation);
         }
     }
 
@@ -103,14 +114,38 @@ class WPCC_Actions{
      */
     public function manage_terms_custom_column($string, $column_name, $item_id) {
 
-        if( $column_name == 'wpcc'){
+        if( str_starts_with($column_name, 'wpcc_' ) ){
 
             $computation = get_term_meta($item_id,'wpcc_details', true);
 
+            $this->displayIndicators($column_name, $computation);
+        }
+    }
+
+    /**
+     * @param $column_name
+     * @param $computation
+     * @return void
+     */
+    private function displayIndicators($column_name, $computation) {
+
+        if( $column_name == 'wpcc_computed'){
+
             if( $computation )
-                echo '<a class="wpcc-badge wpcc-badge--'.esc_attr($computation['colorCode']).'" title="'.esc_attr(round(($computation['co2PerPageview']??0),2)).' g eq. CO²"/>';
+                echo '<a class="wpcc-badge wpcc-badge--'.esc_attr($computation['colorCode']).'" title="'.esc_attr(round(($computation['co2PerPageview']??0),2)).' g eq. CO²"></a>';
             else
-                echo '<a class="wpcc-badge wpcc-badge--grey"/>';
+                echo '<a class="wpcc-badge wpcc-badge--grey"></a>';
+        }
+        elseif( $column_name == 'wpcc_performance_desktop' or $column_name == 'wpcc_performance_mobile'){
+
+            $type = str_replace('wpcc_performance_', '', $column_name);
+
+            $score = $computation['details'][$type]['performanceScore']??($type=='desktop'?$computation['performanceScore']??0:0);
+
+            if( $score )
+                echo '<a class="wpcc-performance wpcc-performance--'.esc_attr(WPCC_Helper::get_color($score)).'" style="--progress:'.esc_attr($score).'">'.esc_html(round($score*100)).'</a>';
+            else
+                echo '<a class="wpcc-performance wpcc-performance--grey"></a>';
         }
     }
 
@@ -141,7 +176,7 @@ class WPCC_Actions{
 
             add_meta_box(
                 'wpcc_calculator',
-                __( 'Carbon calculator', 'website-carbon-calculator' ),
+                __( 'Page Performance', 'website-carbon-calculator' ),
                 [$this, 'add_meta_box'],
                 $post_type,
                 'side',
@@ -201,6 +236,7 @@ class WPCC_Actions{
         $type = sanitize_text_field(wp_unslash($_POST['type']??false));
         $reference = floatval($this->options['reference']);
 
+        set_time_limit(120);
         ignore_user_abort(true);
 
         if( $type == 'post' )
@@ -220,7 +256,7 @@ class WPCC_Actions{
             return;
         }
 
-        if( $time = $this->get_meta($type, $id, 'calculating_carbon') ){
+        if( $time = $this->get_meta($type, $id, 'wpcc_calculating') ){
 
             if( $time+120 > time() ){
                 
@@ -229,7 +265,7 @@ class WPCC_Actions{
             }
         }
 
-        $this->save_meta($type, $id, 'calculating_carbon', time());
+        $this->save_meta($type, $id, 'wpcc_calculating', time());
 
         $base_url = is_multisite() ? network_home_url() : get_home_url();
         $url = rtrim($base_url, '/').wp_make_link_relative($url);
@@ -255,31 +291,47 @@ class WPCC_Actions{
         try {
 
             $url = add_query_arg('hash', wp_hash('carbon_calculate'), $url);
+            $strategies = $this->options['strategy']??['desktop'];
+            $co2 = 0;
+            $performance_score = 0;
+            $data = [];
 
-            $computation = $websiteCarbonCalculator->calculateByURL($url, ['isGreenHost' => $this->options['is_green_host']??false]);
-            $co2 = $computation['co2PerPageview'];
+            foreach($strategies as $strategy){
 
-            unset($computation['url'], $computation['isGreenHost']);
+                $computation = $websiteCarbonCalculator->calculateByURL($url, [
+                        'strategy'=>$strategy,
+                        'isGreenHost' => $this->options['is_green_host']??false]
+                );
 
-            $computation['bytesTransferred'] = $this->humanFilesize($computation['bytesTransferred']);
-            $computation['firstMeaningfulPaint'] = $this->humanTime($computation['firstMeaningfulPaint']);
-            $computation['interactive'] = $this->humanTime($computation['interactive']);
-            $computation['bootupTime'] = $this->humanTime($computation['bootupTime']);
-            $computation['serverResponseTime'] = $this->humanTime($computation['serverResponseTime']);
-            $computation['mainthreadWork'] = $this->humanTime($computation['mainthreadWork']);
-            $computation['energy'] = round($computation['energy']*1000, 2).'Wh';
-            $computation['colorCode'] = $this->getColorCode($co2, $reference);
+                $co2 += $computation['co2PerPageview'];
+                $performance_score += $computation['performanceScore'];
 
-            $this->save_meta($type, $id, 'wpcc_details', $computation);
-            $this->save_meta($type, $id, 'wpcc', $co2);
+                $data['details'][$strategy]['co2PerPageview'] = $computation['co2PerPageview'];
+                $data['details'][$strategy]['energy'] = round($computation['energy']*1000, 2).'Wh';
+                $data['details'][$strategy]['performanceScore'] = $computation['performanceScore'];
+                $data['details'][$strategy]['bytesTransferred'] = $this->humanFilesize($computation['bytesTransferred']);
+                $data['details'][$strategy]['firstContentfulPaint'] = $this->humanTime($computation['firstContentfulPaint']);
+                $data['details'][$strategy]['largestContentfulPaint'] = $this->humanTime($computation['largestContentfulPaint']);
+                $data['details'][$strategy]['interactive'] = $this->humanTime($computation['interactive']);
+                $data['details'][$strategy]['bootupTime'] = $this->humanTime($computation['bootupTime']);
+                $data['details'][$strategy]['serverResponseTime'] = $this->humanTime($computation['serverResponseTime']);
+                $data['details'][$strategy]['mainthreadWork'] = $this->humanTime($computation['mainthreadWork']);
+            }
 
-            $this->delete_meta($type, $id, 'calculating_carbon');
+            $data['co2PerPageview'] = $co2/count($strategies);
+            $data['performanceScore'] = $performance_score/count($strategies);
+            $data['colorCode'] = WPCC_Helper::get_color_code( $data['co2PerPageview'], $reference);
 
-            wp_send_json($computation);
+            $this->save_meta($type, $id, 'wpcc_details', $data);
+            $this->save_meta($type, $id, 'wpcc', $data['co2PerPageview']);
+
+            $this->delete_meta($type, $id, 'wpcc_calculating');
+
+            wp_send_json($data);
 
         } catch (Throwable $t) {
 
-            $this->delete_meta($type, $id, 'calculating_carbon');
+            $this->delete_meta($type, $id, 'wpcc_calculating');
 
             wp_send_json(['in_progress'=>false, 'error'=>$t->getMessage()], 500);
         }
@@ -347,10 +399,10 @@ class WPCC_Actions{
         $id = sanitize_text_field(wp_unslash($_POST['id']??''));
         $type = sanitize_text_field(wp_unslash($_POST['type']??false));
 
-        if( $time = $this->get_meta($type, $id, 'calculating_carbon') ){
+        if( $time = $this->get_meta($type, $id, 'wpcc_calculating') ){
 
             if( $time+120 < time() )
-                $this->delete_meta($type, $id, 'calculating_carbon');
+                $this->delete_meta($type, $id, 'wpcc_calculating');
 
             wp_send_json(['in_progress'=>true], 500);
         }
@@ -364,7 +416,7 @@ class WPCC_Actions{
         }
         else{
 
-            wp_send_json(['co2PerPageview'=>0, 'colorCode'=>'grey']);
+            wp_send_json(['co2PerPageview'=>0, 'colorCode'=>'grey', 'performanceScore'=>0]);
         }
     }
 
@@ -434,7 +486,7 @@ class WPCC_Actions{
         $post = get_post();
 
         $computation = get_post_meta($post->ID, 'wpcc_details', true);
-        self::display_calculator_form($computation, 'post', $post->ID);
+        WPCC_Helper::display_calculator_form($computation, 'post', $post->ID);
     }
 
 
@@ -446,85 +498,8 @@ class WPCC_Actions{
 
         $computation = get_term_meta($tag->term_id, 'wpcc_details', true);
 
-        self::display_calculator_form($computation, 'term', $tag->term_id);
-    }
-
-    /**
-     * @param $co2PerPageview
-     * @param $reference
-     * @return string
-     */
-    public function getColorCode($co2PerPageview, $reference){
-
-        if( !$co2PerPageview )
-            return 'grey';
-
-        $color_code = 'orange';
-
-        if( $co2PerPageview <= $reference/2 )
-            $color_code = 'green';
-        elseif( $co2PerPageview >= $reference )
-            $color_code = 'red';
-
-        return $color_code;
-    }
-
-    /**
-     * @param $computation
-     * @param $type
-     * @param $id
-     * @return void
-     */
-    public static function display_calculator_form($computation, $type, $id){
-
-        $options = get_option('wpcc_settings');
-        $reference = floatval($options['reference']??0.55);
-        $current_screen = get_current_screen();
-
-        if( !$current_screen )
-            return;
-
-        $is_block_editor = $current_screen->is_block_editor();
-        ?>
-        <div class="carbon-calculator carbon-calculator--<?php echo esc_attr($computation['colorCode']??'grey'); ?>">
-
-            <?php if( $type == '404'): ?>
-                <label><a href="<?php echo esc_url(get_home_url().'/404'); ?>" target="_blank" class="dashicons-before dashicons-warning"> 404</a></label>
-            <?php elseif( $type == 'search'): ?>
-                <label><a href="<?php echo esc_url(get_search_link()); ?>" target="_blank" class="dashicons-before dashicons-search"> Search</a></label>
-            <?php elseif( $type == 'term'): ?>
-                <label>Carbon Calculator</label>
-            <?php elseif( $type == 'archive'):
-                $post_type = get_post_type_object($id);
-                ?>
-                <label><a class="dashicons-before <?php echo esc_attr($post_type->menu_icon); ?>" href="<?php echo esc_url(get_post_type_archive_link($post_type->name)); ?>" target="_blank"> <?php echo esc_html($post_type->label); ?></a></label>
-            <?php endif; ?>
-            <div class="carbon-calculator-progressbar">
-                <div class="carbon-calculator-progress" style="width: <?php echo esc_attr((($computation['co2PerPageview']??0)/$reference*100)); ?>%"></div>
-                <div class="carbon-calculator-progressinfo">
-                    <?php if($computation):?>
-                        <?php echo esc_html(round(($computation['co2PerPageview']??0),2)); ?> /
-                    <?php endif; ?>
-                    <?php echo esc_html($reference); ?> g eq. CO²
-                </div>
-            </div>
-            <span class="carbon-calculator-display" title="View computation details">Details</span>
-            <button class="carbon-calculate carbon-calculate-estimate <?php echo esc_attr($is_block_editor?'components-button is-primary':'button button-primary'); ?>" data-type="<?php echo esc_attr($type); ?>" data-nonce="<?php echo esc_attr(wp_create_nonce('carbon-calculator'));?>" data-id="<?php echo esc_attr($id); ?>" role="button" title="Estimated computation time : 15s">
-                <span>Estimate</span>
-                <span>Loading…</span>
-            </button>
-            <div class="carbon-calculator-details">
-                <span>
-                    <?php if($computation):?>
-                        <?php foreach ($computation as $key=>$value) :?>
-                            <?php if( $key != 'co2PerPageview'):?>
-                                <span><?php echo esc_html($key); ?> : <b><?php echo esc_html($value); ?></b></span>
-                            <?php endif; ?>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </span>
-            </div>
-        </div>
-        <?php
+        echo '<div class="postbox wpcc-postbox"><h2>Page Performance</h2><div class="inside">';
+        WPCC_Helper::display_calculator_form($computation, 'term', $tag->term_id);
+        echo '</div></div>';
     }
 }

@@ -10,6 +10,22 @@ class WPCC_Settings{
 
         add_action( 'admin_menu', [$this, 'admin_menu'] );
         add_action( 'admin_init', [$this, 'admin_init'] );
+
+        $plugin = plugin_basename( WPCC_FILE );
+
+        add_filter( 'plugin_action_links_' . $plugin, [$this, 'plugin_action_links']);
+        add_filter( 'network_admin_plugin_action_links_' . $plugin, [$this, 'plugin_action_links']);
+    }
+
+    /**
+     * Add quick links to plugin list page
+     */
+    function plugin_action_links( $links ) {
+
+        $links[] = '<a href="'.admin_url('options-general.php?page=carbon-calculator-options').'">Settings</a>';
+        $links[] = '<a href="'.admin_url('tools.php?page=carbon-calculator').'">Tools</a>';
+
+        return $links;
     }
 
     /**
@@ -33,16 +49,20 @@ class WPCC_Settings{
 
         add_action( 'admin_notices', [$this, 'admin_notices'] );
 
-        register_setting(
-            'wpcc_settings', // Option group
-            'wpcc_settings', // Option name
-            [$this, 'sanitize'] // Sanitize
-        );
+        register_setting('wpcc_settings', 'wpcc_settings', [$this, 'sanitize']);
 
         $options = get_option('wpcc_settings');
         $options = is_array($options)?$options:[];
 
-        $options = array_merge(['is_green_host'=>false, 'post_types'=>[], 'taxonomies'=>[], 'pagespeed_api_key'=>'', 'reference'=>0.55], $options);
+        $options = array_merge([
+                'is_green_host'=>false,
+                'post_types'=>[],
+                'columns'=>[],
+                'taxonomies'=>[],
+                'strategy'=>[],
+                'pagespeed_api_key'=>'',
+                'reference'=>0.55
+        ], $options);
 
         add_settings_section( 'wpcc_settings_section', 'Settings', function() use($options){
 
@@ -86,6 +106,24 @@ class WPCC_Settings{
                                 Please use <a href="https://www.thegreenwebfoundation.org/green-web-check/" target="_blank">thegreenwebfoundation.org</a> if you are not sure
                             </em>
                         </p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Display</th>
+                    <td>
+                        <select name="wpcc_settings[columns][]" multiple style="min-width: 250px">
+                            <option value="computed_carbon" <?php echo esc_attr(in_array('computed_carbon', $options['columns'])?'selected':''); ?>>Computed carbon</option>
+                            <option value="performance" <?php echo esc_attr(in_array('performance', $options['columns'])?'selected':''); ?>>Performance score</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Strategy</th>
+                    <td>
+                        <select name="wpcc_settings[strategy][]" multiple style="min-width: 250px">
+                            <option value="desktop" <?php echo esc_attr(in_array('desktop', $options['strategy'])?'selected':''); ?>>Desktop</option>
+                            <option value="mobile" <?php echo esc_attr(in_array('mobile', $options['strategy'])?'selected':''); ?>>Mobile</option>
+                        </select>
                     </td>
                 </tr>
                 <tr>
@@ -163,6 +201,8 @@ class WPCC_Settings{
         $new_input['is_green_host'] = boolval( $input['is_green_host']??false );
         $new_input['post_types'] = $input['post_types']??[];
         $new_input['taxonomies'] = $input['taxonomies']??[];
+        $new_input['columns'] = $input['columns']??[];
+        $new_input['strategy'] = $input['strategy']??[];
         $new_input['reference'] = floatval($input['reference']??0);
 
         return $new_input;

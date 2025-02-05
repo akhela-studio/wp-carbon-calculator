@@ -9,14 +9,7 @@ class WPCC_MAIN{
 
     public function __construct() {
 
-        include WPCC_DIR.'/includes/settings.php';
-        new WPCC_Settings();
-
-        include WPCC_DIR.'/includes/tools.php';
-        new WPCC_Tools();
-
-        include WPCC_DIR.'/includes/actions.php';
-        new WPCC_Actions();
+        $this->loadAll();
 
         // Initialize Variables
         $this->plugin_dir_path = plugin_dir_path( WPCC_FILE );
@@ -26,24 +19,24 @@ class WPCC_MAIN{
         add_action( 'admin_head', [$this, 'admin_head'] );
     }
 
-    public static function getCalculatedCarbon(){
+    public function loadAll(){
 
-        global $wp_query;
+        include WPCC_DIR.'/includes/settings.php';
+        new WPCC_Settings();
 
-        $queried_object = get_queried_object();
+        include WPCC_DIR.'/includes/tools.php';
+        new WPCC_Tools();
 
-        if( $queried_object instanceof WP_Term )
-            return get_term_meta($queried_object->term_id, 'wpcc', true);
-        elseif ( $queried_object instanceof WP_Post )
-            return get_post_meta($queried_object->ID, 'wpcc', true);
-        elseif ( $queried_object instanceof WP_Post_Type )
-            return get_option($queried_object->name . '::wpcc');
-        elseif ( is_search() )
-            return get_option('wpcc::search');
-        elseif ( is_404() || ($wp_query->query['name']??'') == '404' )
-            return get_option('wpcc::404');
+        include WPCC_DIR.'/includes/actions.php';
+        new WPCC_Actions();
 
-        return false;
+        include WPCC_DIR.'/includes/dashboard.php';
+        new WPCC_Dashboard();
+
+        include WPCC_DIR.'/includes/migration.php';
+        new WPCC_Migration();
+
+        include WPCC_DIR.'/includes/helper.php';
     }
 
     /**

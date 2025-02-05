@@ -2,21 +2,19 @@
 .carbon-calculator--red .carbon-calculator-progress{ background: #d75b5c }
 .carbon-calculator--orange .carbon-calculator-progress{ background: #f19c65 }
 .carbon-calculator--green .carbon-calculator-progress{ background: #5fc17d }
-.carbon-calculator--grey .carbon-calculator-display{ display: none }
+.carbon-calculator--grey .carbon-calculator-display{ visibility: hidden }
 
 .carbon-calculator+.carbon-calculator{
     margin-top: 20px; border-top: 1px solid #ddd; padding-top: 20px;
 }
-.carbon-calculator label{ font-weight: 500; color: #1d2327 }
+.carbon-calculator label{ font-weight: 500; color: #1d2327; margin-bottom: 10px; display: block; font-size: 1.1em }
 .carbon-calculator label a{ text-decoration: none; color: inherit }
+.carbon-calculator-indicators{ display: flex; flex-flow: column; grid-gap: 10px }
+.wpcc-postbox .carbon-calculator-indicators{ flex-flow: row; align-items: center; grid-gap: 20px }
 .carbon-calculator-display{ font-weight: 500 }
 .carbon-calculator-progressbar{ height: 5px; border-radius: 10px; background: #eee; position: relative; margin-top: 20px; margin-bottom: 10px }
-.carbon-calculators .carbon-calculator{ width: 80% }
-.carbon-calculators .carbon-calculator-progressbar{ background: #fff; margin-top: 10px }
-.carbon-calculators .carbon-calculate-estimate{ float: right }
-#edittag .carbon-calculator-progressbar{ background: #fff; margin-top: 10px }
 .carbon-calculator-progress{ height: 100%; border-radius: 10px; max-width: 100%; transition: 0.3s }
-.carbon-calculator-progressinfo{ position: absolute; right: 0; bottom: 100%; font-size: 12px; opacity: 0.7 }
+.carbon-calculator-progressinfo{ position: absolute; right: 0; bottom: 100%; font-size: 10px; opacity: 0.7 }
 .carbon-calculate span{ pointer-events: none }
 .carbon-calculate{ cursor: pointer; text-decoration: underline }
 .carbon-calculate.is-loading{ cursor: wait; pointer-events: none }
@@ -30,16 +28,24 @@
 #side-sortables .carbon-calculate.is-loading:after{
     margin-left: 0; background-image: url("loader-white.svg")
 }
-.carbon-calculator-statistics li{ margin-bottom: 12px }
-.carbon-calculator-statistics a{ color: inherit; text-decoration: none }
+.carbon-calculator-statistics { margin: 0 }
+.carbon-calculator-statistics li{ display:flex; align-items:center; grid-gap: 4px; padding: 10px; margin: 0 }
+.carbon-calculator-statistics li:nth-child(even){ background-color: #f6f7f7 }
+.carbon-calculator-statistics li > span{ margin-right: 10px }
+.carbon-calculator-statistics .button-primary{ margin-left: auto }
+.carbon-calculator-statistics .dashicons-before{ color: inherit; text-decoration: none }
 .carbon-calculator-tools .dashicons-before:before{ vertical-align: middle }
-.carbon-calculator-statistics a:hover, .carbon-calculator-statistics .carbon-calculator-complete,
-.carbon-calculator-statistics .carbon-calculator-reset{ color: #2271b1; text-decoration: underline }
 
-
-#edittag .carbon-calculate{ float: right }
-#edittag .carbon-calculator{ margin-top: 1em }
-.carbon-calculator-details{ max-width: 480px; display: none }
+.carbon-calculator-data a{ margin-right: 10px }
+.carbon-calculator-data b{ margin-left: 4px }
+.carbon-calculator-data{ display: flex; align-items: center }
+.wpcc-postbox .carbon-calculate{ float: right }
+.wpcc-postbox .carbon-calculator{ margin-top: 1em }
+.carbon-calculator-details{ display: flex; flex-flow: column; grid-gap: 20px }
+.wpcc-postbox .carbon-calculator-details{ flex-flow: row }
+.carbon-calculator-strategy-details{ display: flex; flex-flow: row; flex-wrap: wrap; grid-gap: 10px }
+.carbon-calculator-strategy-details span{ flex-basis: calc(50% - 5px); display: flex; flex-flow: column }
+.carbon-calculator-details h3{ font-size: 13px; border-bottom: 1px solid #ddd; padding-bottom: 5px; text-transform: capitalize }
 #side-sortables .carbon-calculator-details{ max-width: none; clear: both; margin-top: 5px }
 .carbon-calculator-display{ cursor: pointer; padding: 5px 0; display: inline-block }
 .carbon-calculator-display:after{ content: "\f140"; display: inline-block; font: normal 20px/1 dashicons; vertical-align: middle }
@@ -50,10 +56,7 @@
 #side-sortables .carbon-calculate{
     float: right; height: 18px;
 }
-#side-sortables .carbon-calculator--grey .carbon-calculate{
-    background: none; text-decoration: underline;
-    color:#2271b1; padding: 0; float: none;
-}
+#side-sortables .carbon-calculator--grey .carbon-calculator-display{ display: none }
 .carbon-calculate{ text-decoration: none }
 .carbon-calculate.is-busy span{ display: none }
 .carbon-calculate span+span{ display: none }
@@ -71,11 +74,32 @@
     background: none; box-shadow: none; padding: 0;
 }
 
-.wpcc-badge{ width: 14px; height: 14px; background: #eee; display: inline-block; border-radius: 50%; outline: 1px solid #eee; border: 1px solid #ffffff }
+.wpcc-badge{ margin-top: 2px; width: 15px; height: 15px; background: #eee; display: inline-block; border-radius: 50%; outline: 1px solid #eee; border: 1px solid #ffffff }
 .wpcc-badge--red{ background: #d75b5c; outline-color: #d75b5c }
 .wpcc-badge--orange{ background: #f19c65; outline-color: #f19c65 }
 .wpcc-badge--green{ background: #5fc17d; outline-color: #5fc17d }
 .wpcc-badge--grey{ background: #eee; outline-color: #eee }
 
-th#wpcc, td.wpcc.column-wpcc{ width: 22px; white-space: nowrap; text-align: center }
-.wpcc-icon{ color: #666; margin-left: 2px }
+.wpcc-performance{ letter-spacing: -1px; text-decoration: none; width: 19px; height: 19px; border-radius: 50%; display: inline-block; font-size: 10px; text-align: center; line-height: 19px; position: relative }
+.wpcc-performance.dashicons-before:before{ transition: none; position: absolute; top: 5px; left: -0.5px; font-size: 10px }
+.wpcc-performance--green{ color:#5fc17d; background: radial-gradient(closest-side, #f0fff0 79%, transparent 100%), conic-gradient(#5fc17d calc(var(--progress) * 100%), #fff 0); }
+.wpcc-performance--red{ color:#d75b5c; background: radial-gradient(closest-side, #fff0f0 79%, transparent 100%), conic-gradient(#d75b5c calc(var(--progress) * 100%), #fff 0); }
+.wpcc-performance--orange{ color:#f19c65; background: radial-gradient(closest-side, #f4ebe6 79%, transparent 100%), conic-gradient(#f19c65 calc(var(--progress) * 100%), #fff 0); }
+.wpcc-performance--grey{ color:#eee; background: radial-gradient(closest-side, #eee 79%, transparent 100%), conic-gradient(#eee 100%, #fff 0); }
+
+.wpcc-widget{ display: flex; justify-content: space-around; margin-top: 20px; margin-bottom: 10px }
+.wpcc-widget__item{ display: flex; flex-flow: column; align-items: center; grid-gap: 10px }
+.wpcc-widget__progress{ width: 80px; height: 80px; border-radius: 50%; display: inline-block; font-size: 14px; text-align: center; position: relative }
+.wpcc-widget__progress span{ position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) }
+.wpcc-widget__progress:before{ position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-size: 15px; opacity: 0.5 }
+.wpcc-widget__progress--green{ color:#5fc17d; background: radial-gradient(closest-side, #f0fff0 79%, transparent 82%), conic-gradient(#5fc17d calc(var(--progress) * 100%), #fff 0); }
+.wpcc-widget__progress--orange{ color:#f19c65; background: radial-gradient(closest-side, #f4ebe6 79%, transparent 82%), conic-gradient(#f19c65 calc(var(--progress) * 100%), #fff 0); }
+.wpcc-widget__progress--red{ color:#d75b5c; background: radial-gradient(closest-side, #fff0f0 79%, transparent 82%), conic-gradient(#d75b5c calc(var(--progress) * 100%), #fff 0); }
+
+th#wpcc_computed, td.wpcc_computed, th#wpcc_performance_desktop, td.wpcc_performance_desktop, th#wpcc_performance_mobile, td.wpcc_performance_mobile{ width: 20px; white-space: nowrap; text-align: center }
+.wpcc-icon{ color: #666 }
+.wpcc-icon+b{ display: none }
+
+.carbon-calculator-tools .wpcc-postbox-statistics .inside{ padding: 0; margin: 0 }
+.wpcc-postbox > h2{ border-bottom: 1px solid #eee; font-size: 14px; line-height: 1.4; margin: 0; padding: 8px 12px }
+.wpcc-postbox > h2 a{ color: inherit; text-decoration: none }

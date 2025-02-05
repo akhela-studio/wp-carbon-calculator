@@ -9,18 +9,72 @@
 
                 var details = '';
 
-                Object.keys(response).forEach(function (key){
-                    if( key !== 'co2PerPageview' )
-                        details += '<span>'+key+' : <b>'+response[key]+'</b></span>'
+				Object.keys(response['details']).forEach(function (stategy){
+                    details += '<div class="carbon-calculator-strategy">'
+                    details += '<h3>'+stategy+'</h3>'
+                    details += '<div class="carbon-calculator-strategy-details">'
+                    Object.keys(response['details'][stategy]).forEach(function (key){
+                        if( key === 'co2PerPageview' || key === 'performanceScore')
+                            details += '<span>'+key+'<b>'+(Math.round(response['details'][stategy][key]*100)/100)+'</b></span>'
+                        else
+                            details += '<span>'+key+'<b>'+response['details'][stategy][key]+'</b></span>'
+                    })
+                    details += '</div></div>'
                 })
 
-                $parent.find('.carbon-calculator-details').html('<span>'+details+'</span>')
+                $parent.find('.carbon-calculator-details').html(details)
             }
 
             if( !response['co2PerPageview'] )
                 $parent.find('.carbon-calculator-progressinfo').text(website_carbon_calculator.reference+' g eq. CO²')
             else
                 $parent.find('.carbon-calculator-progressinfo').text((Math.round(response['co2PerPageview']*100)/100)+' / '+website_carbon_calculator.reference+' g eq. CO²')
+
+			if( !response['co2PerPageview'] ){
+
+				$parent.find('.carbon-calculator-data--carbon b').text('Not available')
+				$parent.find('.carbon-calculator-data--performance b').text('Not available')
+			}
+			else{
+
+				var desktop_score = typeof response['details']['desktop']['performanceScore'] == 'undefined' ? response['performanceScore'] : response['details']['desktop']['performanceScore'];
+				var $desktop = $parent.find('.carbon-calculator-data--desktop');
+
+				if( $desktop.length ){
+
+					$desktop.find('.wpcc-performance').removeClass('wpcc-performance--grey')
+						.removeClass('wpcc-performance--orange')
+						.removeClass('wpcc-performance--green')
+						.removeClass('wpcc-performance--red')
+						.addClass('wpcc-performance--'+(desktop_score < 0.5 ? "red" : ( desktop_score > 0.9 ? 'green': 'orange')))
+						.css('--progress', desktop_score)
+
+					$desktop.find('b').text(Math.round(desktop_score*100))
+				}
+
+				var mobile_score = typeof response['details']['mobile']['performanceScore'] == 'undefined' ? response['performanceScore'] : response['details']['mobile']['performanceScore'];
+				var $mobile = $parent.find('.carbon-calculator-data--mobile')
+
+				if( $mobile.length ){
+
+					$mobile.find('.wpcc-performance').removeClass('wpcc-performance--grey')
+						.removeClass('wpcc-performance--orange')
+						.removeClass('wpcc-performance--green')
+						.removeClass('wpcc-performance--red')
+						.addClass('wpcc-performance--'+(mobile_score < 0.5 ? "red" : ( mobile_score > 0.9 ? 'green': 'orange')))
+						.css('--progress', mobile_score)
+
+					$mobile.find('b').text(Math.round(mobile_score*100))
+				}
+
+				$parent.find('.carbon-calculator-data--carbon .wpcc-badge').removeClass('wpcc-badge--grey')
+					.removeClass('wpcc-badge--orange')
+					.removeClass('wpcc-badge--green')
+					.removeClass('wpcc-badge--red')
+					.addClass('wpcc-badge--'+response['colorCode'])
+
+				$parent.find('.carbon-calculator-data--carbon b').text((Math.round(response['co2PerPageview']*100)/100)+'g eq. CO²')
+			}
 
             $parent.find('.carbon-calculator-progress').width((response['co2PerPageview']/website_carbon_calculator.reference*100)+'%')
 
@@ -52,16 +106,23 @@
 
             }).fail(function(xhr, status, error) {
 
-                if( xhr.responseJSON.in_progress ){
+                if( typeof xhr.responseJSON != 'undefined' ){
 
-                    setTimeout(function (){
-                        doRequest($button, 'get_calculated_carbon')
-                    }, 2000)
+                    if( xhr.responseJSON.in_progress ){
+
+                        setTimeout(function (){
+                            doRequest($button, 'get_calculated_carbon')
+                        }, 2000)
+                    }
+                    else{
+
+                        $button.removeClass('is-busy').attr('disabled', false);
+                        alert(xhr.responseJSON.error)
+                    }
                 }
                 else{
 
-                    $button.removeClass('is-busy').attr('disabled', false);
-                    alert(xhr.responseJSON.error)
+                    alert(xhr.responseText)
                 }
             });
         }
