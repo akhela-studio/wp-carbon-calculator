@@ -10,16 +10,20 @@
                 var details = '';
 
 				Object.keys(response['details']).forEach(function (stategy){
-                    details += '<div class="carbon-calculator-strategy">'
-                    details += '<h3>'+stategy+'</h3>'
-                    details += '<div class="carbon-calculator-strategy-details">'
-                    Object.keys(response['details'][stategy]).forEach(function (key){
-                        if( key === 'co2PerPageview' || key === 'performanceScore')
-                            details += '<span>'+key+'<b>'+(Math.round(response['details'][stategy][key]*100)/100)+'</b></span>'
-                        else
-                            details += '<span>'+key+'<b>'+response['details'][stategy][key]+'</b></span>'
-                    })
-                    details += '</div></div>'
+
+                    if( response['details'][stategy] ){
+
+                        details += '<div class="carbon-calculator-strategy">'
+                        details += '<h3>'+stategy+'</h3>'
+                        details += '<div class="carbon-calculator-strategy-details">'
+                        Object.keys(response['details'][stategy]).forEach(function (key){
+                            if( key === 'co2PerPageview' || key === 'performanceScore')
+                                details += '<span>'+key+'<b>'+(Math.round(response['details'][stategy][key]*100)/100)+'</b></span>'
+                            else
+                                details += '<span>'+key+'<b>'+response['details'][stategy][key]+'</b></span>'
+                        })
+                        details += '</div></div>'
+                    }
                 })
 
                 $parent.find('.carbon-calculator-details').html(details)

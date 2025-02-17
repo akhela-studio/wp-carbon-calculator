@@ -9,7 +9,7 @@ Author URI: https://www.akhela.fr
 Tags: carbon, emissions, measure, sustainability, performance
 Requires at least: 5.8
 Tested up to: 6.7
-Stable tag: 1.3.1
+Stable tag: 1.3.3
 Requires PHP: 7.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -72,6 +72,13 @@ This will output the calculated CO₂ emissions in grams.
 
 == Changelog ==
 
+= 1.3.3 =
+* Post type archive calculation was buggy
+
+= 1.3.2 =
+* Fix migration
+* Minor css bugfix
+
 = 1.3.1 =
 * Disable debug
 
@@ -92,6 +99,5 @@ This will output the calculated CO₂ emissions in grams.
 == Roadmap ==
 
 * Translations
-* Display Google page speed performance score
+* WebPageTest, GTmetrix and Yellow Lab Tools support
 * Ecoindex.fr algorithm support
-* Better settings/tools interface design

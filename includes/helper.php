@@ -1,7 +1,5 @@
 <?php
 
-use Akhela\WebsiteCarbonCalculator\WebsiteCarbonCalculator;
-
 class WPCC_Helper{
 
     /**
@@ -18,7 +16,7 @@ class WPCC_Helper{
         elseif ( $queried_object instanceof WP_Post )
             return get_post_meta($queried_object->ID, 'wpcc', true);
         elseif ( $queried_object instanceof WP_Post_Type )
-            return get_option($queried_object->name . '::wpcc');
+            return get_option('wpcc::'.$queried_object->name);
         elseif ( is_search() )
             return get_option('wpcc::search');
         elseif ( is_404() || ($wp_query->query['name']??'') == '404' )

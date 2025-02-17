@@ -295,9 +295,16 @@ class WPCC_Actions{
 
             $url = add_query_arg('hash', wp_hash('carbon_calculate'), $url);
             $strategies = $this->options['strategy']??['desktop'];
+
             $co2 = 0;
             $performance_score = 0;
-            $data = [];
+
+            $data = [
+                'details'=>[
+                    'desktop'=>false,
+                    'mobile'=>false
+                ]
+            ];
 
             foreach($strategies as $strategy){
 
@@ -419,7 +426,12 @@ class WPCC_Actions{
         }
         else{
 
-            wp_send_json(['co2PerPageview'=>0, 'colorCode'=>'grey', 'performanceScore'=>0]);
+            wp_send_json([
+                'co2PerPageview'=>0,
+                'colorCode'=>'grey',
+                'performanceScore'=>0,
+                'details'=>[]
+            ]);
         }
     }
 
@@ -435,7 +447,7 @@ class WPCC_Actions{
         if( $type == 'search' || $type == '404' )
             update_option($key.'::'.$type, $value);
         if( $type == 'archive' )
-            update_option($key.'::'.$type, $value);
+            update_option($key.'::'.$id, $value);
         elseif( $type == 'post' )
             update_post_meta($id, $key, $value);
         elseif( $type == 'term' )
@@ -453,7 +465,7 @@ class WPCC_Actions{
         if( $type == 'search' || $type == '404' )
             delete_option($key.'::'.$type);
         if( $type == 'archive' )
-            delete_option($key.'::'.$type);
+            delete_option($key.'::'.$id);
         elseif( $type == 'post' )
             delete_post_meta($id, $key);
         elseif( $type == 'term' )
@@ -471,7 +483,7 @@ class WPCC_Actions{
         if( $type == 'search' || $type == '404' )
             return get_option($key.'::'.$type, false);
         if( $type == 'archive' )
-            return get_option($key.'::'.$type, false);
+            return get_option($key.'::'.$id, false);
         elseif( $type == 'post' )
             return get_post_meta($id, $key, true);
         elseif( $type == 'term' )

@@ -22,7 +22,7 @@ Whether you're a sustainability-conscious blogger, a corporate website manager, 
 #### Via Composer
 
 ```shell
-$ composer require akhela/wp-carbon-calculator
+$ composer require wpackagist-plugin/website-carbon-calculator
 ```
 #### Via GitHub
 

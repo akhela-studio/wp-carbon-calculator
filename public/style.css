@@ -23,11 +23,9 @@
     content: ""; width: 30px; height: 8px; margin-left: 10px; display: inline-block;
     background: url("loader.svg") no-repeat center; background-size: contain
 }
+.carbon-calculate.button-primary.is-loading:after{ background-image: url("loader-white.svg") }
 .carbon-calculator-tools td{ padding-top: 40px }
 .carbon-calculator-tools label b{ font-size: 110% }
-#side-sortables .carbon-calculate.is-loading:after{
-    margin-left: 0; background-image: url("loader-white.svg")
-}
 .carbon-calculator-statistics { margin: 0 }
 .carbon-calculator-statistics li{ display:flex; align-items:center; grid-gap: 4px; padding: 10px; margin: 0 }
 .carbon-calculator-statistics li:nth-child(even){ background-color: #f6f7f7 }
@@ -37,6 +35,7 @@
 .carbon-calculator-tools .dashicons-before:before{ vertical-align: middle }
 
 .carbon-calculator-data a{ margin-right: 10px }
+.carbon-calculator-data a:hover{ color: inherit }
 .carbon-calculator-data b{ margin-left: 4px }
 .carbon-calculator-data{ display: flex; align-items: center }
 .wpcc-postbox .carbon-calculate{ float: right }
@@ -56,7 +55,6 @@
 #side-sortables .carbon-calculate{
     float: right; height: 18px;
 }
-#side-sortables .carbon-calculator--grey .carbon-calculator-display{ display: none }
 .carbon-calculate{ text-decoration: none }
 .carbon-calculate.is-busy span{ display: none }
 .carbon-calculate span+span{ display: none }

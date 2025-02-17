@@ -6,11 +6,21 @@ class WPCC_Migration{
 
         add_action( 'admin_notices', [$this, 'admin_notices'] );
 
-        if( is_admin() ){
+        add_action('admin_init', function (){
 
-            if( sanitize_text_field(wp_unslash($_GET['page']??'')) == 'carbon-calculator-options' && sanitize_text_field(wp_unslash($_GET['migrate']??'')) == 'v1' && wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['nonce']??'')), 'migrate') )
-                $this->migrateFromV1();
-        }
+            $page = sanitize_text_field(wp_unslash($_GET['page']??''));
+            $nonce = sanitize_text_field(wp_unslash($_GET['nonce']??''));
+            $migrate_from = sanitize_text_field(wp_unslash($_GET['migrate']??''));
+
+            if( $page == 'carbon-calculator-options' && isset($_GET['migrate']) && wp_verify_nonce($nonce, 'migrate') ){
+
+                if( $migrate_from == '1.0' )
+                    $this->migrateFromV1();
+
+                wp_redirect(admin_url('options-general.php?page=carbon-calculator-options'));
+                exit;
+            }
+        });
     }
 
     /**
@@ -21,8 +31,11 @@ class WPCC_Migration{
         $options_v1 = get_option('carbon_calculator');
         $options_v2 = get_option('wpcc_settings');
 
-        if( $options_v1 && !$options_v2 )
-            echo '<div class="notice notice-warning is-dismissible"><p>Website Carbon Calulator : please migrate your settings from <a href="'.esc_url(admin_url('options-general.php?page=carbon-calculator-options&migrate=v1&nonce'.wp_create_nonce('migrate'))).'">v1</a></p></div>';
+        if( $options_v1 && !$options_v2 ){
+
+            $nonce = wp_create_nonce('migrate');
+            echo '<div class="notice notice-warning is-dismissible"><p><b>Website Carbon Calulator</b> : <a href="'.esc_url(admin_url('options-general.php?page=carbon-calculator-options&migrate=1.0&nonce='.esc_attr($nonce))).'">please migrate your settings.</a></p></div>';
+        }
     }
 
     public function migrateFromV1() {
