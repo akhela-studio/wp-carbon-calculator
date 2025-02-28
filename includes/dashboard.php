@@ -54,7 +54,7 @@ class WPCC_Dashboard{
         foreach ($this->options['taxonomies']??[] as $taxonomy){
 
             $results = $wpdb->get_results(
-                    $wpdb->prepare(" SELECT t.term_id, tm.meta_value FROM {$wpdb->terms} t INNER JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id INNER JOIN {$wpdb->termmeta} tm ON t.term_id = tm.term_id WHERE tt.taxonomy = %s AND tm.meta_key = 'wpcc_details'", $taxonomy)
+                $wpdb->prepare(" SELECT t.term_id, tm.meta_value FROM {$wpdb->terms} t INNER JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id INNER JOIN {$wpdb->termmeta} tm ON t.term_id = tm.term_id WHERE tt.taxonomy = %s AND tm.meta_key = 'wpcc_details'", $taxonomy)
             );
 
             foreach ($results as $result){
@@ -85,28 +85,30 @@ class WPCC_Dashboard{
         $co2_reference = floatval($this->options['reference']??0.55);
 
         ?>
-            <div class="wpcc-widget">
+        <div class="wpcc-widget">
+            <?php if ($total_items): ?>
                 <div class="wpcc-widget__item">
                     <span class="wpcc-widget__progress wpcc-widget__progress--<?php echo  esc_attr(WPCC_Helper::get_color($computed_items/$total_items)); ?>" style="--progress:<?php echo esc_attr($computed_items/$total_items); ?>">
                         <span><?php echo esc_html($computed_items); ?>/<?php echo esc_html($total_items); ?></span>
                     </span>
                     Computed items
                 </div>
-                <div class="wpcc-widget__item">
-                    <span title="Desktop: <?php echo esc_attr(round($performance_score['desktop']*100));?>, Mobile: <?php echo esc_attr(round($performance_score['mobile']*100));?>" class="wpcc-widget__progress wpcc-widget__progress--<?php echo  esc_attr(WPCC_Helper::get_color($performance_score['general'])); ?>" style="--progress:<?php echo esc_attr($performance_score['general']); ?>">
-                        <span><?php echo esc_html(round($performance_score['general']*100)); ?></span>
-                    </span>
-                    Performance
-                </div>
-                <?php if ($co2PerPageview): ?>
-                    <div class="wpcc-widget__item">
-                        <span title="Average emission per page view" class="wpcc-widget__progress wpcc-widget__progress--<?php echo  esc_attr(WPCC_Helper::get_color($co2_reference/($co2PerPageview/$computed_items))); ?>" style="--progress:<?php echo esc_attr(($co2PerPageview/$computed_items)/$co2_reference); ?>">
-                            <span><?php echo esc_html(round($co2PerPageview/$computed_items*100)/100); ?></span>
-                        </span>
-                        g eq. CO² / page
-                    </div>
-                <?php endif; ?>
+            <?php endif; ?>
+            <div class="wpcc-widget__item">
+                <span title="Desktop: <?php echo esc_attr(round($performance_score['desktop']*100));?>, Mobile: <?php echo esc_attr(round($performance_score['mobile']*100));?>" class="wpcc-widget__progress wpcc-widget__progress--<?php echo  esc_attr(WPCC_Helper::get_color($performance_score['general'])); ?>" style="--progress:<?php echo esc_attr($performance_score['general']); ?>">
+                    <span><?php echo esc_html(round($performance_score['general']*100)); ?></span>
+                </span>
+                Performance
             </div>
+            <?php if ($co2PerPageview): ?>
+                <div class="wpcc-widget__item">
+                    <span title="Average emission per page view" class="wpcc-widget__progress wpcc-widget__progress--<?php echo  esc_attr(WPCC_Helper::get_color($co2_reference/($co2PerPageview/$computed_items))); ?>" style="--progress:<?php echo esc_attr(($co2PerPageview/$computed_items)/$co2_reference); ?>">
+                        <span><?php echo esc_html(round($co2PerPageview/$computed_items*100)/100); ?></span>
+                    </span>
+                    g eq. CO² / page
+                </div>
+            <?php endif; ?>
+        </div>
         <?php
     }
 }

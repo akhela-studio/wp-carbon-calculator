@@ -103,7 +103,9 @@ class WPCC_Tools{
      */
     public function admin_menu()
     {
-        add_submenu_page( 'tools.php', 'Carbon calculator','Carbon calculator', 'manage_options', 'carbon-calculator', function(){
+        $capability = apply_filters('wpcc_tools_capability', 'edit_others_posts');
+
+        add_submenu_page( 'tools.php', 'Carbon calculator','Carbon calculator', $capability, 'carbon-calculator', function(){
 
             ?>
             <h1>Carbon calculator</h1>
