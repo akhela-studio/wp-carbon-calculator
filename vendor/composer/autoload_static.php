@@ -21,6 +21,7 @@ class ComposerStaticInit7761d7f9fcff66ccd3e5f35cefb50030
         array (
             'Symfony\\Polyfill\\Intl\\Normalizer\\' => 33,
             'Symfony\\Polyfill\\Intl\\Idn\\' => 26,
+            'SustainableWeb\\WebsiteCarbonCalculator\\' => 39,
             'Sabre\\Uri\\' => 10,
         ),
         'P' => 
@@ -33,10 +34,6 @@ class ComposerStaticInit7761d7f9fcff66ccd3e5f35cefb50030
             'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
         ),
-        'A' => 
-        array (
-            'Akhela\\WebsiteCarbonCalculator\\' => 31,
-        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -47,6 +44,10 @@ class ComposerStaticInit7761d7f9fcff66ccd3e5f35cefb50030
         'Symfony\\Polyfill\\Intl\\Idn\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-intl-idn',
+        ),
+        'SustainableWeb\\WebsiteCarbonCalculator\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/sustainableweb/website-carbon-calculator/src',
         ),
         'Sabre\\Uri\\' => 
         array (
@@ -68,16 +69,9 @@ class ComposerStaticInit7761d7f9fcff66ccd3e5f35cefb50030
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
         ),
-        'Akhela\\WebsiteCarbonCalculator\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/akhela/website-carbon-calculator/src',
-        ),
     );
 
     public static $classMap = array (
-        'Akhela\\WebsiteCarbonCalculator\\Traits\\HelpersTraits' => __DIR__ . '/..' . '/akhela/website-carbon-calculator/src/Traits/HelpersTraits.php',
-        'Akhela\\WebsiteCarbonCalculator\\Traits\\UrlTraits' => __DIR__ . '/..' . '/akhela/website-carbon-calculator/src/Traits/UrlTraits.php',
-        'Akhela\\WebsiteCarbonCalculator\\WebsiteCarbonCalculator' => __DIR__ . '/..' . '/akhela/website-carbon-calculator/src/WebsiteCarbonCalculator.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'GuzzleHttp\\Client' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Client.php',
         'GuzzleHttp\\ClientInterface' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/ClientInterface.php',
@@ -170,6 +164,9 @@ class ComposerStaticInit7761d7f9fcff66ccd3e5f35cefb50030
         'Psr\\Http\\Message\\UriInterface' => __DIR__ . '/..' . '/psr/http-message/src/UriInterface.php',
         'Sabre\\Uri\\InvalidUriException' => __DIR__ . '/..' . '/sabre/uri/lib/InvalidUriException.php',
         'Sabre\\Uri\\Version' => __DIR__ . '/..' . '/sabre/uri/lib/Version.php',
+        'SustainableWeb\\WebsiteCarbonCalculator\\Traits\\HelpersTraits' => __DIR__ . '/..' . '/sustainableweb/website-carbon-calculator/src/Traits/HelpersTraits.php',
+        'SustainableWeb\\WebsiteCarbonCalculator\\Traits\\UrlTraits' => __DIR__ . '/..' . '/sustainableweb/website-carbon-calculator/src/Traits/UrlTraits.php',
+        'SustainableWeb\\WebsiteCarbonCalculator\\WebsiteCarbonCalculator' => __DIR__ . '/..' . '/sustainableweb/website-carbon-calculator/src/WebsiteCarbonCalculator.php',
         'Symfony\\Polyfill\\Intl\\Idn\\Idn' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/Idn.php',
         'Symfony\\Polyfill\\Intl\\Idn\\Info' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/Info.php',
         'Symfony\\Polyfill\\Intl\\Idn\\Resources\\unidata\\DisallowedRanges' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/Resources/unidata/DisallowedRanges.php',

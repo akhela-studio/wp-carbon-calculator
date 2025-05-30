@@ -4,12 +4,12 @@ Plugin Name: Website Carbon Calculator
 Description: Calculate the CO₂ impact and performance of your web pages in real time, without API delays, directly from your WordPress admin panel.
 Contributors: akhelastudio
 Donate link: https://buymeacoffee.com/akhela
-Author: Akhela
-Author URI: https://www.akhela.fr
+Author: Sustainable Web Dev
+Author URI: https://sustainablewebdev.org
 Tags: carbon, emissions, measure, sustainability, performance
 Requires at least: 5.8
-Tested up to: 6.7
-Stable tag: 1.3.5
+Tested up to: 6.8
+Stable tag: 1.3.6
 Requires PHP: 7.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -22,7 +22,7 @@ Effortlessly calculate any page’s impact and performance, with real-time resul
 
 The internet consumes a lot of electricity. 1021 TWh per year to be precise. To give you some perspective, that’s more than the entire United Kingdom.
 
-From data centres to transmission networks to the billions of connected devices that we hold in our hands, it is all consuming electricity, and in turn producing carbon emissions equal to or greater than the global aviation industry. Yikes!
+From data centers to transmission networks to the billions of connected devices that we hold in our hands, it is all consuming electricity, and in turn producing carbon emissions equal to or greater than the global aviation industry. Yikes!
 
 The WordPress Carbon Calculator empowers website owners to assess and minimize their carbon footprint. Drawing inspiration from the acclaimed Website Carbon Calculator algorithm 2.0 and leveraging The Green Web Foundation's co2.js, this user-friendly tool allows you to calculate the CO₂ impact and performance of any page on your website directly from your WordPress admin panel.
 
@@ -30,10 +30,10 @@ You can choose to activate it on selected post types and taxonomies, with full s
 
 **Key Features:**
 
-* **Precision Carbon Calculations:** Built upon the Website Carbon Calculator algorithm 2.0 and powered by The Green Web Foundation's co2.js, delivering accurate CO₂ impact calculations with the latest environmental data.
+* **Precision Carbon Calculations: ** Built upon the Website Carbon Calculator algorithm 2.0 and powered by The Green Web Foundation's co2.js, delivering accurate CO₂ impact calculations with the latest environmental data.
 * **Intuitive Interface:** Offers a user-friendly interface within your WordPress admin area, simplifying access to environmental and performance data.
 * **Front-End Presentation:** Displays the computed CO₂ impact or the Google Page Speed Performance score on your website's front end, engaging and educating your visitors.
-* **Data from Google Page Speed:** Utilizes Google Page Speed to gather loaded data, providing comprehensive performance metrics for informed decisions.
+* **Data from Google Page Speed: ** Utilizes Google Page Speed to gather loaded data, providing comprehensive performance metrics for informed decisions.
 
 == Installation ==
 

@@ -6,9 +6,6 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Akhela\\WebsiteCarbonCalculator\\Traits\\HelpersTraits' => $vendorDir . '/akhela/website-carbon-calculator/src/Traits/HelpersTraits.php',
-    'Akhela\\WebsiteCarbonCalculator\\Traits\\UrlTraits' => $vendorDir . '/akhela/website-carbon-calculator/src/Traits/UrlTraits.php',
-    'Akhela\\WebsiteCarbonCalculator\\WebsiteCarbonCalculator' => $vendorDir . '/akhela/website-carbon-calculator/src/WebsiteCarbonCalculator.php',
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'GuzzleHttp\\Client' => $vendorDir . '/guzzlehttp/guzzle/src/Client.php',
     'GuzzleHttp\\ClientInterface' => $vendorDir . '/guzzlehttp/guzzle/src/ClientInterface.php',
@@ -101,6 +98,9 @@ return array(
     'Psr\\Http\\Message\\UriInterface' => $vendorDir . '/psr/http-message/src/UriInterface.php',
     'Sabre\\Uri\\InvalidUriException' => $vendorDir . '/sabre/uri/lib/InvalidUriException.php',
     'Sabre\\Uri\\Version' => $vendorDir . '/sabre/uri/lib/Version.php',
+    'SustainableWeb\\WebsiteCarbonCalculator\\Traits\\HelpersTraits' => $vendorDir . '/sustainableweb/website-carbon-calculator/src/Traits/HelpersTraits.php',
+    'SustainableWeb\\WebsiteCarbonCalculator\\Traits\\UrlTraits' => $vendorDir . '/sustainableweb/website-carbon-calculator/src/Traits/UrlTraits.php',
+    'SustainableWeb\\WebsiteCarbonCalculator\\WebsiteCarbonCalculator' => $vendorDir . '/sustainableweb/website-carbon-calculator/src/WebsiteCarbonCalculator.php',
     'Symfony\\Polyfill\\Intl\\Idn\\Idn' => $vendorDir . '/symfony/polyfill-intl-idn/Idn.php',
     'Symfony\\Polyfill\\Intl\\Idn\\Info' => $vendorDir . '/symfony/polyfill-intl-idn/Info.php',
     'Symfony\\Polyfill\\Intl\\Idn\\Resources\\unidata\\DisallowedRanges' => $vendorDir . '/symfony/polyfill-intl-idn/Resources/unidata/DisallowedRanges.php',

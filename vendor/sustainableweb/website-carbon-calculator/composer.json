@@ -1,0 +1,26 @@
+{
+    "name": "sustainableweb/website-carbon-calculator",
+    "version": "2.0.0",
+    "description": "Estimate your web page carbon footprint and performance",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jérome Barbato",
+            "email": "jerome.barbato@gmail.com",
+            "homepage": "https://github.com/jerome-barbato"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "^6.0|^7.0",
+        "sabre/uri": "^2",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    },
+    "autoload": {
+        "psr-4" : {
+            "SustainableWeb\\WebsiteCarbonCalculator\\" : "src/"
+        }
+    }
+}

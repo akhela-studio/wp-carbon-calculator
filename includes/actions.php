@@ -1,6 +1,6 @@
 <?php
 
-use Akhela\WebsiteCarbonCalculator\WebsiteCarbonCalculator;
+use SustainableWeb\WebsiteCarbonCalculator\WebsiteCarbonCalculator;
 
 class WPCC_Actions{
 
@@ -286,7 +286,7 @@ class WPCC_Actions{
         }
 
         //load library
-        if( !class_exists('Akhela\WebsiteCarbonCalculator\WebsiteCarbonCalculator') )
+        if( !class_exists('SustainableWeb\WebsiteCarbonCalculator\WebsiteCarbonCalculator') )
             require __DIR__ . '/../vendor/autoload.php';
 
         $websiteCarbonCalculator = new WebsiteCarbonCalculator($this->options['pagespeed_api_key']);

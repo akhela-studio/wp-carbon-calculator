@@ -1,48 +1,6 @@
 {
     "packages": [
         {
-            "name": "akhela/website-carbon-calculator",
-            "version": "1.1.0",
-            "version_normalized": "1.1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/akhela-studio/website-carbon-calculator.git",
-                "reference": "6d2fc706916f65ebec5ab7265e95be45410e74f9"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/akhela-studio/website-carbon-calculator/zipball/6d2fc706916f65ebec5ab7265e95be45410e74f9",
-                "reference": "6d2fc706916f65ebec5ab7265e95be45410e74f9",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "guzzlehttp/guzzle": "^6.0|^7.0",
-                "sabre/uri": "^2"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^9.5"
-            },
-            "time": "2025-02-05T17:54:01+00:00",
-            "type": "library",
-            "installation-source": "dist",
-            "autoload": {
-                "psr-4": {
-                    "Akhela\\WebsiteCarbonCalculator\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Estimate your web page carbon footprint and performance",
-            "support": {
-                "issues": "https://github.com/akhela-studio/website-carbon-calculator/issues",
-                "source": "https://github.com/akhela-studio/website-carbon-calculator/tree/1.1.0"
-            },
-            "install-path": "../akhela/website-carbon-calculator"
-        },
-        {
             "name": "guzzlehttp/guzzle",
             "version": "6.5.8",
             "version_normalized": "6.5.8.0",
@@ -517,18 +475,67 @@
             "install-path": "../sabre/uri"
         },
         {
-            "name": "symfony/polyfill-intl-idn",
-            "version": "v1.31.0",
-            "version_normalized": "1.31.0.0",
+            "name": "sustainableweb/website-carbon-calculator",
+            "version": "2.0.0",
+            "version_normalized": "2.0.0.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/polyfill-intl-idn.git",
-                "reference": "c36586dcf89a12315939e00ec9b4474adcb1d773"
+                "url": "https://github.com/sustainableweb-dev/website-carbon-calculator.git",
+                "reference": "81673d51d90292c3e9ee316c86f6f12c1a36c52b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-intl-idn/zipball/c36586dcf89a12315939e00ec9b4474adcb1d773",
-                "reference": "c36586dcf89a12315939e00ec9b4474adcb1d773",
+                "url": "https://api.github.com/repos/sustainableweb-dev/website-carbon-calculator/zipball/81673d51d90292c3e9ee316c86f6f12c1a36c52b",
+                "reference": "81673d51d90292c3e9ee316c86f6f12c1a36c52b",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "guzzlehttp/guzzle": "^6.0|^7.0",
+                "sabre/uri": "^2"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.5"
+            },
+            "time": "2025-05-30T13:40:17+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "SustainableWeb\\WebsiteCarbonCalculator\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jérome Barbato",
+                    "email": "jerome.barbato@gmail.com",
+                    "homepage": "https://github.com/jerome-barbato"
+                }
+            ],
+            "description": "Estimate your web page carbon footprint and performance",
+            "support": {
+                "issues": "https://github.com/sustainableweb-dev/website-carbon-calculator/issues",
+                "source": "https://github.com/sustainableweb-dev/website-carbon-calculator/tree/2.0.0"
+            },
+            "install-path": "../sustainableweb/website-carbon-calculator"
+        },
+        {
+            "name": "symfony/polyfill-intl-idn",
+            "version": "v1.32.0",
+            "version_normalized": "1.32.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-intl-idn.git",
+                "reference": "9614ac4d8061dc257ecc64cba1b140873dce8ad3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-intl-idn/zipball/9614ac4d8061dc257ecc64cba1b140873dce8ad3",
+                "reference": "9614ac4d8061dc257ecc64cba1b140873dce8ad3",
                 "shasum": ""
             },
             "require": {
@@ -538,7 +545,7 @@
             "suggest": {
                 "ext-intl": "For best performance"
             },
-            "time": "2024-09-09T11:45:10+00:00",
+            "time": "2024-09-10T14:38:51+00:00",
             "type": "library",
             "extra": {
                 "thanks": {
@@ -584,7 +591,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-intl-idn/tree/v1.31.0"
+                "source": "https://github.com/symfony/polyfill-intl-idn/tree/v1.32.0"
             },
             "funding": [
                 {
@@ -604,8 +611,8 @@
         },
         {
             "name": "symfony/polyfill-intl-normalizer",
-            "version": "v1.31.0",
-            "version_normalized": "1.31.0.0",
+            "version": "v1.32.0",
+            "version_normalized": "1.32.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-intl-normalizer.git",
@@ -668,7 +675,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-intl-normalizer/tree/v1.31.0"
+                "source": "https://github.com/symfony/polyfill-intl-normalizer/tree/v1.32.0"
             },
             "funding": [
                 {
@@ -687,6 +694,6 @@
             "install-path": "../symfony/polyfill-intl-normalizer"
         }
     ],
-    "dev": false,
+    "dev": true,
     "dev-package-names": []
 }
