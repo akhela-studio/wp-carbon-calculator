@@ -9,7 +9,7 @@ Author URI: https://sustainablewebdev.org
 Tags: carbon, emissions, measure, sustainability, performance
 Requires at least: 5.8
 Tested up to: 6.8
-Stable tag: 1.3.6
+Stable tag: 1.3.7
 Requires PHP: 7.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -71,6 +71,12 @@ This will output the calculated CO₂ emissions in grams.
 8. Customizable Settings – Fine-tune calculations for accurate CO₂ impact analysis.
 
 == Changelog ==
+
+= 1.3.7 =
+* Update Guzzle to 7.1
+
+= 1.3.6 =
+* Update vendors
 
 = 1.3.5 =
 * Fix DivisionByZeroError on dashboard thanks to @ryansholin
