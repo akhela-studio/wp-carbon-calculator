@@ -3,13 +3,12 @@
 Plugin Name: Website Carbon Calculator
 Description: Calculate the CO₂ impact and performance of your web pages in real time, without API delays, directly from your WordPress admin panel.
 Contributors: akhelastudio
-Donate link: https://buymeacoffee.com/akhela
 Author: Sustainable Web Dev
 Author URI: https://sustainablewebdev.org
 Tags: carbon, emissions, measure, sustainability, performance
 Requires at least: 5.8
-Tested up to: 6.8
-Stable tag: 1.3.7
+Tested up to: 6.9
+Stable tag: 1.3.9
 Requires PHP: 7.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -30,10 +29,10 @@ You can choose to activate it on selected post types and taxonomies, with full s
 
 **Key Features:**
 
-* **Precision Carbon Calculations: ** Built upon the Website Carbon Calculator algorithm 2.0 and powered by The Green Web Foundation's co2.js, delivering accurate CO₂ impact calculations with the latest environmental data.
+* **Precision Carbon Calculations:** Built upon the Website Carbon Calculator algorithm 2.0 and powered by The Green Web Foundation's co2.js, delivering accurate CO₂ impact calculations with the latest environmental data.
 * **Intuitive Interface:** Offers a user-friendly interface within your WordPress admin area, simplifying access to environmental and performance data.
 * **Front-End Presentation:** Displays the computed CO₂ impact or the Google Page Speed Performance score on your website's front end, engaging and educating your visitors.
-* **Data from Google Page Speed: ** Utilizes Google Page Speed to gather loaded data, providing comprehensive performance metrics for informed decisions.
+* **Data from Google Page Speed:** Utilizes Google Page Speed to gather loaded data, providing comprehensive performance metrics for informed decisions.
 
 == Installation ==
 
@@ -71,6 +70,12 @@ This will output the calculated CO₂ emissions in grams.
 8. Customizable Settings – Fine-tune calculations for accurate CO₂ impact analysis.
 
 == Changelog ==
+
+= 1.3.9 =
+* Prevent saving data when emission per page is too low
+
+= 1.3.8 =
+* Bump version
 
 = 1.3.7 =
 * Update Guzzle to 7.1

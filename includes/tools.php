@@ -11,7 +11,36 @@ class WPCC_Tools{
         if( empty($this->options['pagespeed_api_key']??'') || (in_array($_SERVER['REMOTE_ADDR']??'127.0.0.1', ['127.0.0.1', '::1']) && !WPCC_DEBUG) )
             return;
 
+        if( (($_GET['page']??'') == 'carbon-calculator') && (($_GET['action']??'') == 'clear-invalid') && wp_verify_nonce($_GET['nonce']??'', 'carbon-calculator-clear') ){
+
+            $this->clearInvalid();
+            wp_redirect(admin_url('tools.php?page=carbon-calculator'));
+            exit;
+        }
+
         add_action( 'admin_menu', [$this, 'admin_menu'] );
+    }
+
+    private function clearInvalid(){
+
+        global $wpdb;
+        $result = $wpdb->get_results($wpdb->prepare("SELECT DISTINCT `post_id` from `$wpdb->postmeta` WHERE `meta_key` = 'wpcc' AND `meta_value`<0.01"));
+
+        foreach ($result as $item){
+
+            delete_post_meta($item->post_id, 'wpcc');
+            delete_post_meta($item->post_id, 'wpcc_details');
+            delete_post_meta($item->post_id, 'wpcc_pending');
+        }
+
+        $result = $wpdb->get_results($wpdb->prepare("SELECT DISTINCT `term_id` from `$wpdb->termmeta` WHERE `meta_key` = 'wpcc' AND `meta_value`=0.01"));
+
+        foreach ($result as $item){
+
+            delete_term_meta($item->term_id, 'wpcc');
+            delete_term_meta($item->term_id, 'wpcc_details');
+            delete_term_meta($item->term_id, 'wpcc_pending');
+        }
     }
 
     public function getStatistics(){
@@ -173,6 +202,16 @@ class WPCC_Tools{
                                 ?>
                             </div>
                         </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        <h2>Misc</h2>
+                    </th>
+                    <td>
+                        <a class="button button-primary" href="<?php echo esc_url(admin_url('tools.php?page=carbon-calculator&action=clear-invalid&nonce='.wp_create_nonce('carbon-calculator-clear'))); ?>">
+                            <span>Clear Invalid Computation</span>
+                        </a>
                     </td>
                 </tr>
                 </tbody>

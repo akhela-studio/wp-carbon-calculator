@@ -332,10 +332,13 @@ class WPCC_Actions{
             $data['performanceScore'] = $performance_score/count($strategies);
             $data['colorCode'] = WPCC_Helper::get_color_code( $data['co2PerPageview'], $reference);
 
+            $this->delete_meta($type, $id, 'wpcc_calculating');
+
+            if( $data['co2PerPageview'] < 0.01 )
+                wp_send_json(['in_progress'=>false, 'error'=>'CO² par page is too low ( bellow 0.01 )'], 500);
+
             $this->save_meta($type, $id, 'wpcc_details', $data);
             $this->save_meta($type, $id, 'wpcc', $data['co2PerPageview']);
-
-            $this->delete_meta($type, $id, 'wpcc_calculating');
 
             wp_send_json($data);
 
